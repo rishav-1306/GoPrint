@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<title>GoPrint Sticker Printing & Packing System</title>
+<script>
+  // Redirect to login or dashboard based on auth state
+  (function() {
+    try {
+      const token = localStorage.getItem('rsb_token');
+      if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.exp && Date.now() / 1000 < payload.exp) {
+          window.location.href = '/pages/dashboard.html';
+          return;
+        }
+      }
+    } catch (_) {}
+    window.location.href = '/pages/login.html';
+  })();
+</script>
+</head>
+<body style="font-family:'Open Sans',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#142a7d;color:white;margin:0;">
+  <div style="text-align:center;">
+    <p style="font-size:14px;opacity:0.8;">Redirecting...</p>
+  </div>
+</body>
+</html>

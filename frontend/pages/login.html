@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login | GoPrint RSB Industrial Sticker System</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "rsb-red": "#bb0013",
+          "rsb-red-hover": "#a00010",
+          "rsb-navy": "#0d1b40",
+          "rsb-blue": "#142a7d",
+        },
+        fontFamily: {
+          "sans": ["Inter", "Open Sans", "sans-serif"],
+        },
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Inter', 'Open Sans', sans-serif; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .industrial-grid-bg {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .input-field {
+    width: 100%; height: 46px; padding: 0 44px 0 14px;
+    border: 1px solid #334155; border-radius: 8px;
+    font-size: 14px; color: #f8fafc; background: #0f172a;
+    transition: all 0.2s ease-in-out;
+    outline: none;
+  }
+  .input-field:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    background: #1e293b;
+  }
+  .input-field.error { border-color: #ef4444; }
+</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col lg:flex-row antialiased selection:bg-rsb-red selection:text-white">
+
+  <!-- LEFT COLUMN: 70% Width - Corporate Plant Image & Industrial Highlights -->
+  <div class="hidden lg:flex lg:w-[70%] relative overflow-hidden bg-slate-950 flex-col justify-between p-10 xl:p-14 select-none">
+    
+    <!-- Background Industrial Image with Smooth Layers -->
+    <div class="absolute inset-0 z-0">
+      <img src="/public/assets/images/rsb.webp" alt="RSB Plant Facility" class="w-full h-full object-cover object-center filter saturate-[1.1] brightness-[0.82] transform scale-[1.02] transition-transform duration-[12000ms] ease-out hover:scale-100" />
+      
+      <!-- Gradient Overlays for Readability & Depth -->
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-slate-950/30"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-slate-950/90"></div>
+      <div class="absolute inset-0 industrial-grid-bg opacity-30"></div>
+    </div>
+
+    <!-- Top Bar Header -->
+    <div class="relative z-10 flex items-center justify-between">
+      <div class="flex items-center gap-4 bg-slate-900/80 backdrop-blur-md px-4 py-2.5 rounded-xl border border-slate-800/80 shadow-lg">
+        <img src="/public/assets/images/logo.png" alt="RSB Logo" class="h-9 w-auto object-contain bg-white p-1 rounded-md" />
+        <div class="h-6 w-px bg-slate-700"></div>
+        <div>
+          <h2 class="text-xs font-bold text-slate-200 tracking-wider uppercase">RSB Transmissions (I) Ltd.</h2>
+          <p class="text-[11px] text-slate-400 font-medium">Plant Unit 1 • Industrial Automation Division</p>
+        </div>
+      </div>
+
+      <!-- Live Operational Badge -->
+      <div class="flex items-center gap-2.5 bg-slate-900/80 backdrop-blur-md px-3.5 py-2 rounded-xl border border-slate-800/80 text-xs text-slate-300 font-medium">
+        <span class="relative flex h-2.5 w-2.5">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+        </span>
+        <span>Factory Printing Node: Active</span>
+      </div>
+    </div>
+
+    <!-- Center Content & Branding Quote -->
+    <div class="relative z-10 max-w-2xl my-auto py-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rsb-red/20 border border-rsb-red/40 text-rsb-red text-xs font-bold uppercase tracking-widest mb-4 backdrop-blur-sm">
+        <span class="material-symbols-outlined text-sm">precision_manufacturing</span>
+        GoPrint Enterprise Portal v1.0
+      </div>
+      <h1 class="text-4xl xl:text-5xl font-extrabold text-white tracking-tight leading-tight drop-shadow-md">
+        Precision Labeling & Traceability Systems
+      </h1>
+      <p class="mt-4 text-base xl:text-lg text-slate-300 leading-relaxed font-normal opacity-90 drop-shadow">
+        Automated sticker generation, high-speed thermal printing control, and real-time QR/Barcode packing validation for RSB automotive components.
+      </p>
+
+      <!-- Industrial Highlights Badges -->
+      <div class="mt-8 grid grid-cols-3 gap-4">
+        <div class="bg-slate-900/75 backdrop-blur-md p-4 rounded-xl border border-slate-800/90 shadow-xl">
+          <div class="flex items-center gap-2 text-blue-400 mb-1">
+            <span class="material-symbols-outlined text-xl">qr_code_scanner</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Serialization</span>
+          </div>
+          <p class="text-sm text-slate-400 font-medium">100% Component Verification</p>
+        </div>
+
+        <div class="bg-slate-900/75 backdrop-blur-md p-4 rounded-xl border border-slate-800/90 shadow-xl">
+          <div class="flex items-center gap-2 text-emerald-400 mb-1">
+            <span class="material-symbols-outlined text-xl">print</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">ZPL Engine</span>
+          </div>
+          <p class="text-sm text-slate-400 font-medium">Direct Network Printing</p>
+        </div>
+
+        <div class="bg-slate-900/75 backdrop-blur-md p-4 rounded-xl border border-slate-800/90 shadow-xl">
+          <div class="flex items-center gap-2 text-amber-400 mb-1">
+            <span class="material-symbols-outlined text-xl">verified_user</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Compliance</span>
+          </div>
+          <p class="text-sm text-slate-400 font-medium">ISO 9001 & OEM Standards</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Footer Info -->
+    <div class="relative z-10 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/60 pt-4">
+      <p>&copy; 2026 RSB Transmissions (I) Ltd. All Rights Reserved.</p>
+      <p class="flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+        Secure Industrial Network Protocol
+      </p>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN: 30% Width - Professional Login Card & Auth Form -->
+  <div class="w-full lg:w-[30%] min-h-screen bg-slate-900 border-l border-slate-800/80 flex flex-col justify-between p-6 sm:p-8 xl:p-10 relative z-20 shadow-2xl">
+    
+    <!-- Top Mobile Branding (Visible on mobile/tablet) -->
+    <div class="lg:hidden flex items-center gap-3 mb-6 pb-4 border-b border-slate-800">
+      <img src="/public/assets/images/logo.png" alt="RSB Logo" class="h-8 w-auto object-contain bg-white p-1 rounded" />
+      <div>
+        <h2 class="text-sm font-bold text-white tracking-wide">GOPRINT SYSTEM</h2>
+        <p class="text-xs text-slate-400">RSB Industrial Labeling Dashboard</p>
+      </div>
+    </div>
+
+    <!-- Main Card Container -->
+    <div class="my-auto w-full max-w-sm mx-auto">
+      
+      <!-- Logo Header -->
+      <div class="text-left mb-8">
+        <div class="inline-flex items-center justify-center bg-white p-2.5 rounded-xl shadow-md mb-4 border border-slate-200">
+          <img src="/public/assets/images/logo.png" alt="RSB Logo" class="h-10 w-auto object-contain" />
+        </div>
+        <h2 class="text-2xl font-bold text-white tracking-tight">System Sign In</h2>
+        <p class="text-xs text-slate-400 mt-1 font-medium">Enter your credentials to access printing dispatch & reports.</p>
+      </div>
+
+      <!-- Error Alert Banner -->
+      <div id="errorBanner" class="hidden mb-6 p-3.5 bg-red-950/80 border border-red-800/90 rounded-lg flex items-start gap-3 text-red-200 text-xs font-medium backdrop-blur-sm">
+        <span class="material-symbols-outlined text-red-400 text-lg shrink-0 mt-0.5">error</span>
+        <span id="errorMessage" class="leading-relaxed">Invalid username or password.</span>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" autocomplete="on" class="space-y-5">
+        
+        <!-- Username Field -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2" for="username">
+            Operator ID / Username
+          </label>
+          <div class="relative">
+            <input autocomplete="username" class="input-field" id="username" name="username" placeholder="e.g. admin" required type="text"/>
+            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] pointer-events-none">person</span>
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider" for="password">
+              Password
+            </label>
+          </div>
+          <div class="relative">
+            <input autocomplete="current-password" class="input-field" id="password" name="password" placeholder="••••••••" required type="password"/>
+            <button type="button" id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors p-1" title="Toggle password visibility">
+              <span class="material-symbols-outlined text-[20px]" id="toggleIcon">visibility</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <button type="submit" id="loginBtn"
+          class="w-full h-11 bg-rsb-blue hover:bg-blue-700 text-white font-semibold text-sm rounded-lg active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-900/30 border border-blue-600/40">
+          <span class="material-symbols-outlined text-lg" id="loginBtnIcon">login</span>
+          <span id="loginBtnText">Sign In to Dashboard</span>
+        </button>
+      </form>
+
+    </div>
+
+    <!-- Security & Copyright Footer -->
+    <div class="pt-6 border-t border-slate-800/80 text-center">
+      <div class="flex items-center justify-center gap-2 text-xs text-slate-500 font-medium">
+        <span>Authorized Personnel Only</span>
+        <span>•</span>
+        <span>v1.0.0 Enterprise</span>
+      </div>
+      <p class="text-[11px] text-slate-600 mt-1">
+        All login attempts and thermal printing operations are audited.
+      </p>
+    </div>
+
+  </div>
+
+  <script src="/public/js/api.js"></script>
+  <script>
+    // Redirect if already logged in
+    if (Auth.isAuthenticated()) {
+      window.location.href = '/pages/dashboard.html';
+    }
+
+    const form = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginBtnIcon = document.getElementById('loginBtnIcon');
+    const loginBtnText = document.getElementById('loginBtnText');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', () => {
+      const pwd = document.getElementById('password');
+      const icon = document.getElementById('toggleIcon');
+      if (pwd.type === 'password') {
+        pwd.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        pwd.type = 'password';
+        icon.textContent = 'visibility';
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBanner.classList.add('hidden');
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!username || !password) {
+        showError('Please enter your username and password.');
+        return;
+      }
+
+      // Loading state
+      loginBtn.disabled = true;
+      loginBtnIcon.textContent = 'sync';
+      loginBtnIcon.classList.add('animate-spin');
+      loginBtnText.textContent = 'Authenticating...';
+
+      try {
+        const result = await api.login(username, password);
+        Auth.setToken(result.token);
+        loginBtnIcon.textContent = 'check_circle';
+        loginBtnIcon.classList.remove('animate-spin');
+        loginBtnText.textContent = `Welcome, ${result.user.name}!`;
+        loginBtn.classList.add('bg-emerald-600', 'border-emerald-500');
+        loginBtn.classList.remove('bg-rsb-blue', 'hover:bg-blue-700');
+        setTimeout(() => { window.location.href = '/pages/dashboard.html'; }, 800);
+      } catch (err) {
+        loginBtn.disabled = false;
+        loginBtnIcon.textContent = 'login';
+        loginBtnIcon.classList.remove('animate-spin');
+        loginBtnText.textContent = 'Sign In to Dashboard';
+        showError(err.message || 'Login failed. Please check credentials.');
+      }
+    });
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.classList.remove('hidden');
+      document.getElementById('username').classList.add('error');
+      document.getElementById('password').classList.add('error');
+      setTimeout(() => {
+        document.getElementById('username').classList.remove('error');
+        document.getElementById('password').classList.remove('error');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

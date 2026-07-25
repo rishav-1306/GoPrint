@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sticker Templates | GoPrint</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config={darkMode:"class",theme:{extend:{"colors":{"error":"#ba1a1a","outline-variant":"#c5c5d3","on-primary":"#ffffff","on-surface":"#1b1c1c","surface":"#fbf9f8","background":"#fbf9f8","primary-container":"#2f4295","outline":"#757683","secondary":"#bb0013","on-surface-variant":"#454651","error-container":"#ffdad6","primary":"#142a7d","surface-container-lowest":"#ffffff","surface-container":"#efeded","primary-fixed":"#dde1ff","surface-container-low":"#f5f3f3","primary-fixed-dim":"#b9c3ff"},"spacing":{"gutter":"24px","md":"24px","xs":"4px","sm":"12px","lg":"40px","base":"8px"}}}}
+</script>
+<style>body{font-family:'Open Sans',sans-serif;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}.sidebar-active{background:rgba(255,255,255,0.1);border-left:4px solid #bb0013;font-weight:700;}</style>
+</head>
+<body class="bg-background text-on-surface flex min-h-screen">
+<aside class="w-[260px] h-screen fixed left-0 top-0 overflow-y-auto bg-primary-container shadow-xl flex flex-col py-md z-50">
+  <div class="px-md mb-lg flex items-center gap-sm">
+    <div class="bg-white rounded-lg p-1.5 shadow-md flex items-center justify-center">
+      <img src="/public/assets/images/logo.png" alt="RSB Logo" class="h-9 w-auto object-contain max-w-[120px]" />
+    </div>
+    <div><h1 class="font-headline-md text-on-primary-container font-black leading-none tracking-tight">GoPrint</h1><p class="text-[10px] text-primary-fixed-dim opacity-80 uppercase tracking-widest">Sticker Systems</p></div>
+  </div>
+  <nav class="flex-1 space-y-xs px-xs">
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/dashboard.html"><span class="material-symbols-outlined">dashboard</span><span class="font-label-lg">Dashboard</span></a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/master-registration.html"><span class="material-symbols-outlined">app_registration</span><span class="font-label-lg">Master Registration</span></a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/printing-station.html"><span class="material-symbols-outlined">precision_manufacturing</span><span class="font-label-lg">Printing Station</span></a>
+    <a class="sidebar-active flex items-center gap-sm px-md py-sm text-white transition-all translate-x-1 rounded-r-lg" href="/pages/sticker-templates.html"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">style</span><span class="font-label-lg">Sticker Templates</span></a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/printer-settings.html"><span class="material-symbols-outlined">print</span><span class="font-label-lg">Printer Settings</span></a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/reports.html"><span class="material-symbols-outlined">analytics</span><span class="font-label-lg">Reports</span></a>
+    <div class="border-t border-white/10 mt-sm pt-sm">
+      <a class="flex items-center gap-sm px-md py-sm text-error/80 hover:text-error rounded-lg transition-all" href="#" data-action="logout"><span class="material-symbols-outlined">logout</span><span class="font-label-lg">Exit System</span></a>
+    </div>
+  </nav>
+</aside>
+<main class="ml-[260px] flex-1 flex flex-col min-h-screen">
+  <header class="h-20 w-full flex items-center px-gutter justify-between bg-surface border-b border-outline-variant sticky top-0 z-40">
+    <div><h2 class="font-headline-md text-primary font-bold">Sticker Templates</h2><p class="text-xs text-on-surface-variant">Manage label templates for printing</p></div>
+    <div class="flex items-center gap-md">
+      <button id="addTemplateBtn" class="bg-primary text-white px-md py-sm rounded-lg flex items-center gap-xs font-label-lg active:scale-95 transition-all">
+        <span class="material-symbols-outlined">add</span> Add Template
+      </button>
+      <span class="font-label-lg text-on-surface font-semibold" id="headerUserName">User</span>
+      <span class="material-symbols-outlined text-primary text-3xl">account_circle</span>
+    </div>
+  </header>
+  <div class="p-gutter flex-1">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md" id="templatesGrid">
+      <div class="col-span-full text-center py-xl text-on-surface-variant">Loading templates...</div>
+    </div>
+  </div>
+</main>
+
+<!-- Template Modal -->
+<div id="templateModalOverlay" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-md">
+  <div id="templateModal" class="hidden bg-white rounded-2xl shadow-2xl w-full max-w-md p-lg">
+    <div class="flex items-center justify-between mb-lg">
+      <h3 class="font-headline-md text-primary font-bold" id="templateModalTitle">Add Template</h3>
+      <button onclick="closeTemplateModal()" class="p-xs hover:bg-surface-container rounded-lg text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <form id="templateForm" class="space-y-md">
+      <div><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Template Name *</label><input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="ftName" required type="text"/></div>
+      <div class="grid grid-cols-2 gap-md">
+        <div><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Width (mm)</label><input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="ftWidth" type="number" value="100"/></div>
+        <div><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Height (mm)</label><input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="ftHeight" type="number" value="150"/></div>
+      </div>
+      <div><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Description</label><textarea class="w-full px-sm py-sm rounded-lg border border-outline-variant focus:border-primary text-body-md resize-none h-20" id="ftDescription"></textarea></div>
+      <div class="flex gap-md">
+        <label class="flex items-center gap-xs cursor-pointer"><input class="accent-primary w-4 h-4" id="ftQr" type="checkbox" checked/><span class="font-label-lg">Supports QR Code</span></label>
+        <label class="flex items-center gap-xs cursor-pointer"><input class="accent-primary w-4 h-4" id="ftBarcode" type="checkbox"/><span class="font-label-lg">Supports Barcode</span></label>
+      </div>
+      <div class="flex gap-md pt-sm border-t border-outline-variant">
+        <button type="button" onclick="closeTemplateModal()" class="flex-1 h-11 border border-outline-variant text-on-surface rounded-lg font-label-lg hover:bg-surface-container">Cancel</button>
+        <button type="submit" class="flex-1 h-11 bg-primary text-white rounded-lg font-label-lg active:scale-95">Save Template</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/public/js/api.js"></script>
+<script>
+  let editingTemplateId = null;
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (!Auth.requireAuth()) return;
+    const user = Auth.getUser();
+    const el = document.getElementById('headerUserName');
+    if (el) el.textContent = user.name;
+    await loadTemplates();
+    document.getElementById('addTemplateBtn')?.addEventListener('click', () => openTemplateModal());
+    document.getElementById('templateForm')?.addEventListener('submit', saveTemplate);
+    document.getElementById('templateModalOverlay')?.addEventListener('click', (e) => { if (e.target===e.currentTarget) closeTemplateModal(); });
+    document.querySelectorAll('[data-action="logout"]').forEach(el => { el.addEventListener('click', (e) => { e.preventDefault(); Auth.logout(); window.location.href='/pages/login.html'; }); });
+  });
+
+  async function loadTemplates() {
+    const grid = document.getElementById('templatesGrid');
+    try {
+      const { data } = await api.getTemplates();
+      if (!data.length) { grid.innerHTML = '<div class="col-span-full text-center py-xl text-on-surface-variant"><span class="material-symbols-outlined text-[64px] opacity-30">style</span><p class="mt-sm">No templates yet. Add your first template.</p></div>'; return; }
+      grid.innerHTML = data.map(t => `
+        <div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden hover:border-primary transition-all">
+          <div class="bg-surface-container-low px-md py-sm flex items-center justify-between border-b border-outline-variant">
+            <h4 class="font-title-lg text-primary font-bold truncate">${t.template_name}</h4>
+            <div class="flex gap-xs">
+              <button onclick="openTemplateModal(${JSON.stringify(t).replace(/"/g,'&quot;')})" class="p-xs hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+              <button onclick="deleteTemplate(${t.id},'${t.template_name}')" class="p-xs hover:bg-error-container rounded-lg text-on-surface-variant hover:text-error"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+            </div>
+          </div>
+          <div class="p-md">
+            <div class="flex justify-center mb-md">
+              <div class="border-2 border-dashed border-outline-variant rounded-lg flex items-center justify-center bg-surface-container-low" style="width:${t.width*1.5}px;height:${Math.min(t.height,100)}px;max-width:180px;">
+                <span class="text-on-surface-variant text-xs">${t.width}×${t.height}mm</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-sm text-xs">
+              <div><p class="text-on-surface-variant uppercase font-bold">Width</p><p class="font-semibold">${t.width}mm</p></div>
+              <div><p class="text-on-surface-variant uppercase font-bold">Height</p><p class="font-semibold">${t.height}mm</p></div>
+              <div><p class="text-on-surface-variant uppercase font-bold">QR Code</p><p class="font-semibold ${t.supports_qr?'text-green-600':'text-error'}">${t.supports_qr?'Yes':'No'}</p></div>
+              <div><p class="text-on-surface-variant uppercase font-bold">Barcode</p><p class="font-semibold ${t.supports_barcode?'text-green-600':'text-error'}">${t.supports_barcode?'Yes':'No'}</p></div>
+            </div>
+            ${t.description?`<p class="text-xs text-on-surface-variant mt-sm">${t.description}</p>`:''}
+          </div>
+        </div>`).join('');
+    } catch (err) { grid.innerHTML = `<div class="col-span-full text-error text-center py-lg">${err.message}</div>`; }
+  }
+
+  function openTemplateModal(t = null) {
+    editingTemplateId = t ? t.id : null;
+    document.getElementById('templateModalTitle').textContent = t ? 'Edit Template' : 'Add Template';
+    document.getElementById('templateForm').reset();
+    if (t) {
+      document.getElementById('ftName').value = t.template_name || '';
+      document.getElementById('ftWidth').value = t.width || 100;
+      document.getElementById('ftHeight').value = t.height || 150;
+      document.getElementById('ftDescription').value = t.description || '';
+      document.getElementById('ftQr').checked = t.supports_qr !== false;
+      document.getElementById('ftBarcode').checked = t.supports_barcode || false;
+    }
+    document.getElementById('templateModal').classList.remove('hidden');
+    document.getElementById('templateModalOverlay').classList.remove('hidden');
+  }
+
+  function closeTemplateModal() {
+    document.getElementById('templateModal').classList.add('hidden');
+    document.getElementById('templateModalOverlay').classList.add('hidden');
+  }
+
+  async function saveTemplate(e) {
+    e.preventDefault();
+    const payload = { template_name: document.getElementById('ftName').value, width: parseInt(document.getElementById('ftWidth').value), height: parseInt(document.getElementById('ftHeight').value), description: document.getElementById('ftDescription').value, supports_qr: document.getElementById('ftQr').checked, supports_barcode: document.getElementById('ftBarcode').checked };
+    try {
+      if (editingTemplateId) await api.updateTemplate(editingTemplateId, payload);
+      else await api.addTemplate(payload);
+      showToast(editingTemplateId ? 'Template updated.' : 'Template created.', 'success');
+      closeTemplateModal(); await loadTemplates();
+    } catch (err) { showToast(err.message, 'error'); }
+  }
+
+  async function deleteTemplate(id, name) {
+    if (!confirm(`Delete template "${name}"?`)) return;
+    try { await api.deleteTemplate(id); showToast(`Template "${name}" deleted.`, 'success'); await loadTemplates(); }
+    catch (err) { showToast(err.message, 'error'); }
+  }
+
+  function showToast(msg, type='info') {
+    const c={info:'bg-primary',error:'bg-error',success:'bg-green-600'};
+    const t=document.createElement('div');
+    t.className=`fixed top-4 right-4 z-[9999] px-md py-sm rounded-xl text-white font-label-lg shadow-xl ${c[type]}`;
+    t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),4000);
+  }
+</script>
+</body></html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reports | GoPrint Industrial Sticker Printing & Packing System</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config={darkMode:"class",theme:{extend:{"colors":{"secondary-fixed-dim":"#ffb4ab","surface-container-low":"#f5f3f3","primary-fixed-dim":"#b9c3ff","surface-container-high":"#eae8e7","on-tertiary-container":"#fca466","secondary-container":"#e71520","error":"#ba1a1a","on-tertiary":"#ffffff","outline-variant":"#c5c5d3","on-primary":"#ffffff","surface-tint":"#4658ac","on-surface":"#1b1c1c","on-error-container":"#93000a","on-primary-fixed":"#001257","surface":"#fbf9f8","on-secondary-fixed":"#410002","surface-container-highest":"#e4e2e2","surface-bright":"#fbf9f8","inverse-primary":"#b9c3ff","on-secondary-fixed-variant":"#93000d","on-surface-variant":"#454651","on-primary-container":"#a6b4ff","error-container":"#ffdad6","background":"#fbf9f8","primary-container":"#2f4295","tertiary-fixed":"#ffdcc7","surface-dim":"#dbd9d9","secondary-fixed":"#ffdad6","outline":"#757683","secondary":"#bb0013","tertiary-container":"#763800","on-tertiary-fixed-variant":"#723600","inverse-on-surface":"#f2f0f0","surface-variant":"#e4e2e2","on-secondary-container":"#fffbff","on-tertiary-fixed":"#311300","primary":"#142a7d","surface-container-lowest":"#ffffff","on-background":"#1b1c1c","tertiary-fixed-dim":"#ffb787","on-secondary":"#ffffff","surface-container":"#efeded","on-primary-fixed-variant":"#2c3f92","tertiary":"#542600","primary-fixed":"#dde1ff","on-error":"#ffffff","inverse-surface":"#303030"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"gutter":"24px","md":"24px","xs":"4px","sm":"12px","lg":"40px","base":"8px","margin":"32px","xl":"64px"},"fontFamily":{"body-lg":["Open Sans"],"display-lg":["Open Sans"],"headline-lg-mobile":["Open Sans"],"label-lg":["Open Sans"],"headline-md":["Open Sans"],"title-lg":["Open Sans"],"headline-lg":["Open Sans"],"label-md":["Open Sans"],"body-md":["Open Sans"]},"fontSize":{"body-lg":["18px",{"lineHeight":"1.6","fontWeight":"400"}],"display-lg":["48px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-lg-mobile":["28px",{"lineHeight":"1.25","fontWeight":"600"}],"label-lg":["14px",{"lineHeight":"1.4","letterSpacing":"0.01em","fontWeight":"600"}],"headline-md":["24px",{"lineHeight":"1.3","fontWeight":"600"}],"title-lg":["20px",{"lineHeight":"1.4","fontWeight":"600"}],"headline-lg":["32px",{"lineHeight":"1.25","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"1.4","letterSpacing":"0.02em","fontWeight":"500"}],"body-md":["16px",{"lineHeight":"1.5","fontWeight":"400"}]}}}}
+</script>
+<style>
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle;}
+  body{font-family:'Open Sans',sans-serif;}
+  ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#c5c5d3;border-radius:10px;}
+  .glass-card{background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border:1px solid #E2E8F0;}
+  .sidebar-item-active{background:rgba(255,255,255,0.1);color:#ffffff;font-weight:700;border-left:4px solid #bb0013;}
+</style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex">
+
+<!-- SideNavBar -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 overflow-y-auto bg-primary-container dark:bg-primary shadow-xl z-50 flex flex-col py-md">
+  <div class="px-gutter mb-lg flex items-center gap-sm">
+    <div class="bg-white rounded-lg p-1.5 shadow-md flex items-center justify-center">
+      <img src="/public/assets/images/logo.png" alt="RSB Logo" class="h-9 w-auto object-contain max-w-[120px]" />
+    </div>
+    <div>
+      <h1 class="font-headline-md text-on-primary-container dark:text-on-primary font-black tracking-tight leading-none">GoPrint</h1>
+      <p class="text-[10px] text-primary-fixed-dim opacity-80 uppercase tracking-widest">Sticker Systems</p>
+    </div>
+  </div>
+  <nav class="flex-grow space-y-xs">
+    <a class="flex items-center px-gutter py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all duration-300" href="/pages/dashboard.html"><span class="material-symbols-outlined mr-sm">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a>
+    <a class="flex items-center px-gutter py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all duration-300" href="/pages/master-registration.html"><span class="material-symbols-outlined mr-sm">app_registration</span><span class="font-label-lg text-label-lg">Master Registration</span></a>
+    <a class="flex items-center px-gutter py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all duration-300" href="/pages/sticker-templates.html"><span class="material-symbols-outlined mr-sm">style</span><span class="font-label-lg text-label-lg">Sticker Templates</span></a>
+    <a class="flex items-center px-gutter py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all duration-300" href="/pages/printer-settings.html"><span class="material-symbols-outlined mr-sm">print</span><span class="font-label-lg text-label-lg">Printer Settings</span></a>
+    <a class="flex items-center px-gutter py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all duration-300" href="/pages/printing-station.html"><span class="material-symbols-outlined mr-sm">precision_manufacturing</span><span class="font-label-lg text-label-lg">Printing Station</span></a>
+    <a class="flex items-center px-gutter py-sm sidebar-item-active translate-x-1 duration-150" href="/pages/reports.html"><span class="material-symbols-outlined mr-sm" style="font-variation-settings:'FILL' 1;">analytics</span><span class="font-label-lg text-label-lg">Reports</span></a>
+    <div class="pt-lg mt-lg border-t border-white/10">
+      <a class="flex items-center px-gutter py-sm text-secondary-fixed-dim hover:text-white hover:bg-secondary/20 transition-all duration-300" href="#" data-action="logout"><span class="material-symbols-outlined mr-sm">logout</span><span class="font-label-lg text-label-lg">Exit</span></a>
+    </div>
+  </nav>
+  <div class="mt-auto px-gutter py-md">
+    <div class="flex items-center gap-sm bg-white/10 rounded-lg p-sm">
+      <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+      <span class="font-label-md text-white text-label-md">Station Active</span>
+    </div>
+  </div>
+</aside>
+
+<!-- Main Content Area -->
+<main class="ml-[260px] flex-grow flex flex-col min-h-screen overflow-x-hidden">
+  <!-- TopNavBar -->
+  <header class="h-20 w-full flex items-center justify-between px-margin border-b border-outline-variant bg-surface sticky top-0 z-40">
+    <div class="flex items-center gap-lg">
+      <h2 class="font-headline-md text-headline-md text-primary font-bold">Reports Center</h2>
+    </div>
+    <div class="flex items-center gap-md">
+      <div class="flex items-center gap-sm ml-sm pl-md border-l border-outline-variant">
+        <div class="text-right">
+          <p class="font-label-lg text-label-lg text-on-surface leading-none" id="headerUserName">User</p>
+          <p class="font-label-md text-label-md text-on-surface-variant" id="headerUserRole">Role</p>
+        </div>
+        <span class="material-symbols-outlined text-primary text-3xl">account_circle</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="p-margin space-y-lg max-w-[1600px]">
+    <!-- Summary Stats -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
+      <div class="glass-card p-md rounded-xl shadow-sm border border-outline-variant">
+        <div class="flex justify-between items-start mb-sm">
+          <span class="p-sm bg-primary/5 text-primary rounded-lg"><span class="material-symbols-outlined">print</span></span>
+          <span class="text-green-600 font-bold font-label-md flex items-center"><span class="material-symbols-outlined text-[16px] mr-xs">trending_up</span>Today</span>
+        </div>
+        <p class="font-label-md text-on-surface-variant uppercase tracking-wider">Today's Prints</p>
+        <h3 class="font-headline-lg text-headline-lg text-on-surface" id="statTodayPrints">---</h3>
+        <div class="mt-md h-1 w-full bg-surface-container rounded-full overflow-hidden">
+          <div class="h-full bg-primary w-[75%]"></div>
+        </div>
+      </div>
+      <div class="glass-card p-md rounded-xl shadow-sm border border-outline-variant">
+        <div class="flex justify-between items-start mb-sm">
+          <span class="p-sm bg-primary/5 text-primary rounded-lg"><span class="material-symbols-outlined">calendar_view_week</span></span>
+        </div>
+        <p class="font-label-md text-on-surface-variant uppercase tracking-wider">Weekly Prints</p>
+        <h3 class="font-headline-lg text-headline-lg text-on-surface" id="statWeeklyPrints">---</h3>
+        <div class="mt-md h-1 w-full bg-surface-container rounded-full overflow-hidden">
+          <div class="h-full bg-primary w-[60%]"></div>
+        </div>
+      </div>
+      <div class="glass-card p-md rounded-xl shadow-sm border border-outline-variant">
+        <div class="flex justify-between items-start mb-sm">
+          <span class="p-sm bg-primary/5 text-primary rounded-lg"><span class="material-symbols-outlined">hub</span></span>
+        </div>
+        <p class="font-label-md text-on-surface-variant uppercase tracking-wider">Active Printers</p>
+        <h3 class="font-headline-lg text-headline-lg text-on-surface" id="statActivePrinters">---</h3>
+        <div class="mt-md h-1 w-full bg-surface-container rounded-full overflow-hidden">
+          <div class="h-full bg-green-500 w-[75%]"></div>
+        </div>
+      </div>
+      <div class="glass-card p-md rounded-xl shadow-sm border border-outline-variant">
+        <div class="flex justify-between items-start mb-sm">
+          <span class="p-sm bg-secondary/5 text-secondary rounded-lg"><span class="material-symbols-outlined">error</span></span>
+          <span class="text-secondary font-bold font-label-md flex items-center"><span class="material-symbols-outlined text-[16px] mr-xs">report</span>CRITICAL</span>
+        </div>
+        <p class="font-label-md text-on-surface-variant uppercase tracking-wider">Failed Prints</p>
+        <h3 class="font-headline-lg text-headline-lg text-on-surface" id="statFailedPrints">---</h3>
+      </div>
+    </section>
+
+    <!-- Filters & Actions -->
+    <section class="glass-card p-md rounded-xl border border-outline-variant flex flex-col md:flex-row gap-md items-center">
+      <div class="relative flex-grow w-full">
+        <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">search</span>
+        <input class="w-full pl-xl pr-md py-sm rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-primary bg-surface-container-lowest font-body-md text-body-md" id="searchInput" placeholder="Search by Job ID, Client or Part No..." type="text"/>
+      </div>
+      <div class="flex flex-wrap items-center gap-sm w-full md:w-auto">
+        <div class="relative min-w-[160px]">
+          <select class="w-full pl-sm pr-lg py-sm appearance-none rounded-lg border border-outline-variant bg-surface-container-lowest font-label-lg text-on-surface focus:ring-primary focus:border-primary" id="filterClient">
+            <option value="">All Clients</option>
+          </select>
+          <span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+        </div>
+        <div class="relative min-w-[160px]">
+          <select class="w-full pl-sm pr-lg py-sm appearance-none rounded-lg border border-outline-variant bg-surface-container-lowest font-label-lg text-on-surface focus:ring-primary focus:border-primary" id="filterPeriod">
+            <option>Today</option><option>Last 7 Days</option><option>Current Month</option><option>Custom Date</option>
+          </select>
+          <span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 pointer-events-none text-outline">calendar_today</span>
+        </div>
+        <div class="flex gap-xs">
+          <input type="date" class="px-sm py-sm rounded-lg border border-outline-variant bg-surface-container-lowest text-xs" id="filterDateFrom" title="Date From"/>
+          <input type="date" class="px-sm py-sm rounded-lg border border-outline-variant bg-surface-container-lowest text-xs" id="filterDateTo" title="Date To"/>
+        </div>
+        <div class="flex gap-xs border-l border-outline-variant pl-sm">
+          <button class="p-sm bg-primary text-white rounded-lg flex items-center gap-xs font-label-lg active:scale-95 transition-transform" id="exportCSVBtn">
+            <span class="material-symbols-outlined text-[18px]">download</span> Export CSV
+          </button>
+          <button class="p-sm border border-primary text-primary rounded-lg flex items-center gap-xs font-label-lg hover:bg-primary/5 active:scale-95 transition-transform" id="exportPDFBtn">
+            <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> PDF
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pagination Info -->
+    <div class="text-xs text-on-surface-variant font-medium" id="paginationInfo"></div>
+
+    <!-- Main Data Grid -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+      <!-- Detailed Prints Table -->
+      <div class="lg:col-span-2 glass-card rounded-xl border border-outline-variant overflow-hidden">
+        <div class="px-md py-sm bg-surface-container-low border-b border-outline-variant flex justify-between items-center">
+          <h4 class="font-title-lg text-title-lg text-primary flex items-center gap-sm"><span class="material-symbols-outlined">receipt_long</span>Recent Print Logs</h4>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-surface-container-lowest border-b border-outline-variant">
+                <th class="px-md py-sm font-label-lg text-on-surface-variant uppercase">Job ID</th>
+                <th class="px-md py-sm font-label-lg text-on-surface-variant uppercase">Client</th>
+                <th class="px-md py-sm font-label-lg text-on-surface-variant uppercase">Part Description</th>
+                <th class="px-md py-sm font-label-lg text-on-surface-variant uppercase">Quantity</th>
+                <th class="px-md py-sm font-label-lg text-on-surface-variant uppercase text-center">Status</th>
+                <th class="px-md py-sm font-label-lg text-on-surface-variant uppercase">Date & Time</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant" id="logsTableBody">
+              <tr><td colspan="6" class="px-md py-lg text-center text-on-surface-variant">Loading print logs...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Secondary Column -->
+      <div class="space-y-lg">
+        <!-- Printer Performance -->
+        <div class="glass-card rounded-xl border border-outline-variant overflow-hidden">
+          <div class="px-md py-sm bg-surface-container-low border-b border-outline-variant">
+            <h4 class="font-title-lg text-title-lg text-primary flex items-center gap-sm"><span class="material-symbols-outlined">print_connect</span>Printer Performance</h4>
+          </div>
+          <div class="p-md space-y-md" id="printerWiseContainer">
+            <div class="text-on-surface-variant text-sm">Loading...</div>
+          </div>
+        </div>
+        <!-- Client Wise Breakdown -->
+        <div class="glass-card rounded-xl border border-outline-variant overflow-hidden">
+          <div class="px-md py-sm bg-surface-container-low border-b border-outline-variant">
+            <h4 class="font-title-lg text-title-lg text-primary">Client Wise Prints</h4>
+          </div>
+          <div class="p-md" id="clientWiseContainer">
+            <div class="text-on-surface-variant text-sm">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer class="w-full py-sm px-margin border-t border-outline-variant bg-surface-container-lowest mt-auto flex flex-col md:flex-row justify-between items-center gap-sm">
+    <div class="flex items-center gap-md">
+      <span class="font-label-lg font-bold text-primary">GOPRINT INDUSTRIAL</span>
+      <p class="font-label-md text-on-surface-variant">© 2024 GoPrint Industrial Systems. All Rights Reserved.</p>
+    </div>
+    <div class="flex items-center gap-lg">
+      <a class="font-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+      <a class="font-label-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-xs" href="#">
+        <span class="w-2 h-2 rounded-full bg-green-500"></span> System Status
+      </a>
+    </div>
+  </footer>
+</main>
+
+<script src="/public/js/api.js"></script>
+<script src="/public/js/reports.js"></script>
+</body></html>

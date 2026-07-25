@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Printing Station | GoPrint Industrial Sticker Printing & Packing System</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode:"class",
+    theme:{ extend:{ "colors":{"secondary-fixed-dim":"#ffb4ab","surface-container-low":"#f5f3f3","primary-fixed-dim":"#b9c3ff","surface-container-high":"#eae8e7","on-tertiary-container":"#fca466","secondary-container":"#e71520","error":"#ba1a1a","on-tertiary":"#ffffff","outline-variant":"#c5c5d3","on-primary":"#ffffff","surface-tint":"#4658ac","on-surface":"#1b1c1c","on-error-container":"#93000a","on-primary-fixed":"#001257","surface":"#fbf9f8","on-secondary-fixed":"#410002","surface-container-highest":"#e4e2e2","surface-bright":"#fbf9f8","inverse-primary":"#b9c3ff","on-secondary-fixed-variant":"#93000d","on-surface-variant":"#454651","on-primary-container":"#a6b4ff","error-container":"#ffdad6","background":"#fbf9f8","primary-container":"#2f4295","tertiary-fixed":"#ffdcc7","surface-dim":"#dbd9d9","secondary-fixed":"#ffdad6","outline":"#757683","secondary":"#bb0013","tertiary-container":"#763800","on-tertiary-fixed-variant":"#723600","inverse-on-surface":"#f2f0f0","surface-variant":"#e4e2e2","on-secondary-container":"#fffbff","on-tertiary-fixed":"#311300","primary":"#142a7d","surface-container-lowest":"#ffffff","on-background":"#1b1c1c","tertiary-fixed-dim":"#ffb787","on-secondary":"#ffffff","surface-container":"#efeded","on-primary-fixed-variant":"#2c3f92","tertiary":"#542600","primary-fixed":"#dde1ff","on-error":"#ffffff","inverse-surface":"#303030"},
+    "borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+    "spacing":{"gutter":"24px","md":"24px","xs":"4px","sm":"12px","lg":"40px","base":"8px","margin":"32px","xl":"64px"},
+    "fontFamily":{"body-lg":["Open Sans"],"display-lg":["Open Sans"],"headline-lg-mobile":["Open Sans"],"label-lg":["Open Sans"],"headline-md":["Open Sans"],"title-lg":["Open Sans"],"headline-lg":["Open Sans"],"label-md":["Open Sans"],"body-md":["Open Sans"]},
+    "fontSize":{"body-lg":["18px",{"lineHeight":"1.6","fontWeight":"400"}],"display-lg":["48px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-lg-mobile":["28px",{"lineHeight":"1.25","fontWeight":"600"}],"label-lg":["14px",{"lineHeight":"1.4","letterSpacing":"0.01em","fontWeight":"600"}],"headline-md":["24px",{"lineHeight":"1.3","fontWeight":"600"}],"title-lg":["20px",{"lineHeight":"1.4","fontWeight":"600"}],"headline-lg":["32px",{"lineHeight":"1.25","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"1.4","letterSpacing":"0.02em","fontWeight":"500"}],"body-md":["16px",{"lineHeight":"1.5","fontWeight":"400"}]}
+    }}
+  }
+</script>
+<style>
+  body { font-family:'Open Sans',sans-serif; background-color:#fbf9f8; color:#1b1c1c; }
+  .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
+  .glass-panel { background:rgba(255,255,255,0.7); backdrop-filter:blur(8px); border:1px solid rgba(226,232,240,0.8); }
+  .floating-label-group { position:relative; }
+  .floating-label-group input:focus ~ label,
+  .floating-label-group input:not(:placeholder-shown) ~ label,
+  .floating-label-group select:focus ~ label { top:-8px; left:12px; font-size:12px; background:white; padding:0 4px; color:#142a7d; }
+  .floating-label-group label { position:absolute; top:14px; left:16px; transition:all 0.2s ease; pointer-events:none; color:#757683; }
+  .bento-grid { display:grid; grid-template-columns:repeat(12,1fr); gap:24px; }
+  .sidebar-active-tab { background:rgba(255,255,255,0.1); border-left:4px solid #bb0013; font-weight:700; }
+  select option { color: #1b1c1c; }
+  .readonly-field { background-color: #f5f3f3 !important; color: #454651; cursor: not-allowed; }
+</style>
+</head>
+<body class="flex min-h-screen">
+
+<!-- Sidebar Navigation -->
+<aside class="w-[260px] bg-primary-container dark:bg-primary h-screen fixed left-0 top-0 overflow-y-auto flex flex-col py-md shadow-xl z-50 text-on-primary">
+  <div class="px-md mb-lg">
+    <div class="flex items-center gap-sm">
+      <div class="bg-white rounded-lg p-1.5 shadow-md flex items-center justify-center">
+        <img src="/public/assets/images/logo.png" alt="RSB Logo" class="h-9 w-auto object-contain max-w-[120px]" />
+      </div>
+      <div>
+        <h1 class="font-headline-md text-on-primary-container dark:text-on-primary font-black leading-tight tracking-tight">GoPrint</h1>
+        <p class="text-[10px] opacity-80 uppercase tracking-widest">Sticker Systems</p>
+      </div>
+    </div>
+  </div>
+  <nav class="flex-1 space-y-xs px-xs">
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all duration-300 rounded-lg" href="/pages/dashboard.html">
+      <span class="material-symbols-outlined">dashboard</span><span class="font-label-lg">Dashboard</span>
+    </a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all duration-300 rounded-lg" href="/pages/master-registration.html">
+      <span class="material-symbols-outlined">app_registration</span><span class="font-label-lg">Master Registration</span>
+    </a>
+    <a class="sidebar-active-tab flex items-center gap-sm px-md py-sm text-white transition-all duration-150 translate-x-1 rounded-r-lg" href="/pages/printing-station.html">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">precision_manufacturing</span><span class="font-label-lg">Printing Station</span>
+    </a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all duration-300 rounded-lg" href="/pages/sticker-templates.html">
+      <span class="material-symbols-outlined">style</span><span class="font-label-lg">Sticker Templates</span>
+    </a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all duration-300 rounded-lg" href="/pages/printer-settings.html">
+      <span class="material-symbols-outlined">print</span><span class="font-label-lg">Printer Settings</span>
+    </a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all duration-300 rounded-lg" href="/pages/reports.html">
+      <span class="material-symbols-outlined">analytics</span><span class="font-label-lg">Reports</span>
+    </a>
+  </nav>
+  <div class="mt-auto px-md pt-md border-t border-white/10">
+    <div class="bg-secondary-container/20 p-sm rounded-lg mb-md">
+      <div class="flex items-center gap-xs text-secondary-fixed">
+        <span class="w-2 h-2 bg-secondary rounded-full animate-pulse"></span>
+        <span class="text-xs font-bold uppercase tracking-tighter">Station Active</span>
+      </div>
+    </div>
+    <a class="flex items-center gap-sm px-sm py-sm text-primary-fixed-dim hover:text-white transition-colors" href="#" data-action="logout">
+      <span class="material-symbols-outlined">logout</span><span class="font-label-lg">Exit System</span>
+    </a>
+  </div>
+</aside>
+
+<!-- Main Content Canvas -->
+<main class="ml-[260px] flex-1 flex flex-col min-h-screen">
+  <!-- Top App Bar -->
+  <header class="h-20 w-full bg-surface dark:bg-surface-dim border-b border-outline-variant flex items-center justify-between px-gutter sticky top-0 z-40">
+    <div class="flex flex-col">
+      <h2 class="font-headline-md text-primary font-bold">Sticker Printing Station</h2>
+      <div class="flex gap-sm items-center">
+        <span class="bg-surface-container-highest px-2 py-0.5 rounded text-[10px] font-bold text-on-surface-variant uppercase">Shift 1</span>
+        <span class="text-xs text-outline font-medium">User: <span class="text-primary font-bold" id="headerUserName">ADMIN</span></span>
+      </div>
+    </div>
+    <div class="flex items-center gap-md">
+      <div class="flex gap-sm items-center bg-surface-container-low px-sm py-xs rounded-full">
+        <div class="flex items-center gap-xs text-primary">
+          <span class="material-symbols-outlined text-[18px]">print</span>
+          <span class="font-label-md">Prints Today: <span id="statPrintsToday">---</span></span>
+        </div>
+        <div class="w-px h-4 bg-outline-variant"></div>
+        <div class="flex items-center gap-xs text-on-tertiary-container">
+          <span class="material-symbols-outlined text-[18px]">schedule</span>
+          <span class="font-label-md" id="currentTime">--:--:--</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="p-gutter flex-1">
+    <div class="bento-grid">
+      <!-- Left Column: Controls & Settings -->
+      <div class="col-span-12 lg:col-span-4 space-y-md">
+
+        <!-- Printer Settings Card -->
+        <section class="bg-white rounded-xl border border-outline-variant p-md shadow-sm">
+          <div class="flex items-center justify-between mb-sm border-b border-outline-variant pb-xs">
+            <h3 class="font-title-lg text-primary flex items-center gap-xs">
+              <span class="material-symbols-outlined">print_connect</span> Printer Settings
+            </h3>
+          </div>
+          <div class="grid grid-cols-1 gap-sm pt-sm">
+            <div class="floating-label-group">
+              <select class="w-full h-12 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md bg-white px-4" id="printerSelect">
+                <option value="">Loading printers...</option>
+              </select>
+              <label class="font-label-md">Select Printer</label>
+            </div>
+            <div class="grid grid-cols-3 gap-sm">
+              <div class="bg-surface-container-low rounded-lg p-sm text-center">
+                <p class="text-[10px] text-on-surface-variant uppercase font-bold">Darkness</p>
+                <p class="font-bold text-primary text-lg" id="printerDarkness">---</p>
+              </div>
+              <div class="bg-surface-container-low rounded-lg p-sm text-center">
+                <p class="text-[10px] text-on-surface-variant uppercase font-bold">Speed</p>
+                <p class="font-bold text-primary text-lg" id="printerSpeed">---</p>
+              </div>
+              <div class="bg-surface-container-low rounded-lg p-sm text-center">
+                <p class="text-[10px] text-on-surface-variant uppercase font-bold">IP</p>
+                <p class="font-bold text-primary text-xs truncate" id="printerIP">---</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Client & Part Selection Card -->
+        <section class="bg-white rounded-xl border border-outline-variant p-md shadow-sm">
+          <div class="flex items-center justify-between mb-sm border-b border-outline-variant pb-xs">
+            <h3 class="font-title-lg text-primary flex items-center gap-xs">
+              <span class="material-symbols-outlined">business</span> Client & Part Selection
+            </h3>
+          </div>
+          <div class="space-y-sm pt-sm">
+            <!-- Step 1: Client -->
+            <div class="floating-label-group">
+              <select class="w-full h-12 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md bg-white px-4" id="clientSelect">
+                <option value="">Loading clients...</option>
+              </select>
+              <label class="font-label-md">Step 1: Select Client</label>
+            </div>
+            <!-- Step 2: Part Number -->
+            <div class="floating-label-group">
+              <select class="w-full h-12 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md bg-white px-4" id="partSelect">
+                <option value="">-- First select a client --</option>
+              </select>
+              <label class="font-label-md">Step 2: Select Part Number</label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Session Summary -->
+        <section class="bg-primary-container text-on-primary rounded-xl p-md shadow-lg overflow-hidden relative">
+          <div class="absolute right-[-20px] top-[-20px] opacity-10">
+            <span class="material-symbols-outlined text-[120px]">assignment_turned_in</span>
+          </div>
+          <h3 class="font-label-lg uppercase tracking-widest opacity-80 mb-sm">Session Status</h3>
+          <div class="grid grid-cols-2 gap-sm relative z-10">
+            <div>
+              <p class="text-2xl font-bold" id="sessionLabels">0</p>
+              <p class="text-[10px] uppercase opacity-70">Labels Printed</p>
+            </div>
+            <div>
+              <p class="text-2xl font-bold" id="sessionErrors">0</p>
+              <p class="text-[10px] uppercase opacity-70">Errors / Rejects</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Center/Right: Form & Preview -->
+      <div class="col-span-12 lg:col-span-8 space-y-md">
+        <!-- Sticker Details Form -->
+        <section class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+          <div class="bg-secondary-container px-md py-sm flex justify-between items-center">
+            <h3 class="text-white font-bold tracking-wide uppercase flex items-center gap-xs">
+              <span class="material-symbols-outlined text-white">edit_note</span>
+              Sticker Specification Details
+            </h3>
+            <span class="text-white/80 font-label-md">Step 3-6: Enter Details</span>
+          </div>
+          <div class="p-md">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+
+              <!-- Auto-populated fields (READ ONLY) -->
+              <div class="floating-label-group md:col-span-2">
+                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="partDescription" placeholder=" " readonly type="text"/>
+                <label class="font-label-md">Part Description (Auto)</label>
+              </div>
+              <div class="floating-label-group">
+                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="jtNumber" placeholder=" " readonly type="text"/>
+                <label class="font-label-md">JT Number (Auto)</label>
+              </div>
+              <div class="floating-label-group">
+                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="vendorCode" placeholder=" " readonly type="text"/>
+                <label class="font-label-md">Vendor Code (Auto)</label>
+              </div>
+              <div class="floating-label-group">
+                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="revisionLevel" placeholder=" " readonly type="text"/>
+                <label class="font-label-md">Revision Level (Auto)</label>
+              </div>
+              <div class="floating-label-group">
+                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="vendorName" placeholder=" " readonly type="text"/>
+                <label class="font-label-md">Vendor Name (Auto)</label>
+              </div>
+              <div class="floating-label-group">
+                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="dealer" placeholder=" " readonly type="text"/>
+                <label class="font-label-md">Dealer (Auto)</label>
+              </div>
+              <div class="floating-label-group">
+                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="afmCode" placeholder=" " readonly type="text"/>
+                <label class="font-label-md">AFM Code (Auto)</label>
+              </div>
+
+              <!-- Divider -->
+              <div class="md:col-span-2 border-t border-outline-variant pt-sm">
+                <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider mb-sm">Auto-Generated Fields</p>
+              </div>
+
+              <!-- Step 4: Serial Number (AUTO-GENERATED) -->
+              <div class="floating-label-group relative">
+                <div class="w-full h-12 rounded-lg border-2 border-primary/30 bg-primary/5 px-sm flex items-center justify-between">
+                  <div class="flex items-center gap-xs">
+                    <span class="material-symbols-outlined text-primary text-[16px]">tag</span>
+                    <span class="font-mono font-black text-primary text-[17px] tracking-widest" id="serialNumberDisplay">-------</span>
+                  </div>
+                  <div class="flex items-center gap-xs">
+                    <span class="text-[9px] uppercase font-bold text-primary/60 bg-primary/10 px-xs py-0.5 rounded">Auto</span>
+                    <button type="button" id="refreshSerialBtn" title="Regenerate serial number"
+                      class="p-xs rounded-lg hover:bg-primary/10 text-primary transition-all active:scale-90" tabindex="-1">
+                      <span class="material-symbols-outlined text-[16px]" id="refreshSerialIcon">refresh</span>
+                    </button>
+                  </div>
+                </div>
+                <label class="absolute -top-2 left-3 text-[10px] font-bold bg-white px-1 text-primary uppercase">Serial Number (Auto-Generated)</label>
+                <!-- Hidden input carries the value for form submission -->
+                <input type="hidden" id="serialNumber" />
+              </div>
+
+              <!-- Step 5: Manufacturing Date (defaults to today) -->
+              <div class="floating-label-group relative">
+                <div class="flex gap-xs">
+                  <input class="flex-1 h-12 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md px-sm" id="mfgDate" type="date"/>
+                  <button type="button" id="todayBtn" title="Set to today"
+                    class="h-12 px-sm bg-surface-container-low border border-outline-variant rounded-lg text-[11px] font-bold text-primary hover:bg-primary hover:text-white transition-all active:scale-95 whitespace-nowrap">
+                    Today
+                  </button>
+                </div>
+                <label class="absolute -top-2 left-3 text-[10px] font-bold bg-white px-1 text-on-surface-variant uppercase">Mfg Date (Auto: Today)</label>
+              </div>
+
+              <!-- Step 6: Quantity -->
+              <div class="floating-label-group md:col-span-2">
+                <input class="w-full h-12 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md font-bold" id="quantity" min="1" max="9999" placeholder=" " type="number" value="1"/>
+                <label class="font-label-md">Step 6: Quantity *</label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sticker Preview Panel -->
+        <section class="glass-panel rounded-xl p-md shadow-md border-dashed border-2 border-outline-variant">
+          <div class="flex items-center gap-xs mb-md text-outline">
+            <span class="material-symbols-outlined">visibility</span>
+            <h3 class="font-label-lg uppercase tracking-widest">Real-time Sticker Preview</h3>
+          </div>
+          <div class="bg-white p-lg flex flex-col items-center justify-center border border-outline-variant rounded min-h-[280px]">
+            <!-- STICKER PREVIEW CARD — matches 1000mm × 250mm physical template -->
+          <div class="w-full bg-white border-2 border-gray-400 rounded-lg shadow-md font-mono text-black overflow-hidden" style="aspect-ratio:4/1; max-width:100%;">
+            <div class="flex h-full">
+              <!-- LEFT TEXT AREA -->
+              <div class="flex-1 flex flex-col justify-center px-5 py-3 space-y-3 min-w-0">
+                <!-- Row 1: 32-digit code -->
+                <p class="text-[13px] sm:text-[15px] font-black tracking-tight leading-tight break-all uppercase" id="preview32Code" style="font-family:'Courier New',Courier,monospace;">--------------------------------</p>
+                <!-- Divider -->
+                <div class="border-t-2 border-gray-400"></div>
+                <!-- Row 2: Part Description | JT Number -->
+                <div class="flex items-center gap-4 flex-wrap">
+                  <p class="text-[12px] sm:text-[14px] font-black tracking-tight uppercase" id="previewDescription" style="font-family:'Courier New',Courier,monospace;">---</p>
+                  <p class="text-[12px] sm:text-[14px] font-black tracking-tight uppercase ml-4" id="previewJtLabel" style="font-family:'Courier New',Courier,monospace;"></p>
+                </div>
+              </div>
+              <!-- RIGHT: QR CODE -->
+              <div class="flex-shrink-0 flex items-center justify-center border-l-2 border-gray-400 p-2" style="width:22%;">
+                <div class="w-full h-full flex items-center justify-center">
+                  <img id="previewQrImage" src="" alt="QR Code" class="w-full h-full object-contain" style="display:none;"/>
+                  <div id="previewQrPlaceholder" class="flex flex-col items-center opacity-30">
+                    <span class="material-symbols-outlined text-[52px]" style="font-variation-settings:'FILL' 1;">qr_code_2</span>
+                    <span class="text-[9px] text-gray-400 mt-1">QR Preview</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="mt-md text-xs text-outline italic">Label: 1000mm × 250mm | QR encodes the 32-digit composite code. Actual print may vary by printer calibration.</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky Bottom Action Bar -->
+  <footer class="h-24 bg-surface-container-lowest border-t border-outline-variant px-gutter flex items-center justify-between sticky bottom-0 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+    <div class="flex gap-md">
+      <button id="clearBtn" class="bg-surface-container-high text-on-surface hover:bg-surface-container-highest px-md py-sm rounded-lg flex items-center gap-xs transition-all active:scale-95 font-label-lg">
+        <span class="material-symbols-outlined">restart_alt</span> Clear Fields
+      </button>
+      <a href="/pages/printer-settings.html" class="bg-surface-container-high text-on-surface hover:bg-surface-container-highest px-md py-sm rounded-lg flex items-center gap-xs transition-all active:scale-95 font-label-lg">
+        <span class="material-symbols-outlined">settings</span> Printer Config
+      </a>
+    </div>
+    <div class="flex gap-md">
+      <button id="previewBtn" class="bg-outline text-on-surface hover:bg-outline-variant px-xl py-sm rounded-lg flex items-center gap-xs transition-all active:scale-95 font-label-lg font-bold">
+        <span class="material-symbols-outlined">qr_code_2</span> Preview Sticker
+      </button>
+      <button id="printBtn" class="bg-primary-container text-on-primary hover:bg-primary px-xl py-sm rounded-lg flex items-center gap-sm transition-all active:scale-95 shadow-lg group">
+        <span class="material-symbols-outlined group-hover:animate-bounce">print</span>
+        <span class="font-headline-md">Print Sticker</span>
+      </button>
+    </div>
+  </footer>
+</main>
+
+<script src="/public/js/api.js"></script>
+<script src="/public/js/printing-station.js"></script>
+</body></html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Master Registration | GoPrint</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config={darkMode:"class",theme:{extend:{"colors":{"error":"#ba1a1a","outline-variant":"#c5c5d3","on-primary":"#ffffff","on-surface":"#1b1c1c","surface":"#fbf9f8","surface-container-highest":"#e4e2e2","background":"#fbf9f8","primary-container":"#2f4295","outline":"#757683","secondary":"#bb0013","on-surface-variant":"#454651","on-primary-container":"#a6b4ff","error-container":"#ffdad6","primary":"#142a7d","surface-container-lowest":"#ffffff","surface-container":"#efeded","primary-fixed":"#dde1ff","on-error":"#ffffff","surface-container-low":"#f5f3f3","primary-fixed-dim":"#b9c3ff","surface-container-high":"#eae8e7","secondary-container":"#e71520"},"spacing":{"gutter":"24px","md":"24px","xs":"4px","sm":"12px","lg":"40px","base":"8px","margin":"32px","xl":"64px"},"fontFamily":{"label-lg":["Open Sans"],"headline-md":["Open Sans"],"title-lg":["Open Sans"],"body-md":["Open Sans"],"label-md":["Open Sans"]}}}}
+</script>
+<style>body{font-family:'Open Sans',sans-serif;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}.sidebar-active{background:rgba(255,255,255,0.1);border-left:4px solid #bb0013;font-weight:700;}</style>
+</head>
+<body class="bg-background text-on-surface flex min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 overflow-y-auto bg-primary-container shadow-xl flex flex-col py-md z-50">
+  <div class="px-md mb-lg flex items-center gap-sm">
+    <div class="bg-white rounded-lg p-1.5 shadow-md flex items-center justify-center">
+      <img src="/public/assets/images/logo.png" alt="RSB Logo" class="h-9 w-auto object-contain max-w-[120px]" />
+    </div>
+    <div><h1 class="font-headline-md text-on-primary-container font-black leading-none tracking-tight">GoPrint</h1><p class="text-[10px] text-primary-fixed-dim opacity-80 uppercase tracking-widest">Sticker Systems</p></div>
+  </div>
+  <nav class="flex-1 space-y-xs px-xs">
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/dashboard.html"><span class="material-symbols-outlined">dashboard</span><span class="font-label-lg">Dashboard</span></a>
+    <a class="sidebar-active flex items-center gap-sm px-md py-sm text-white transition-all translate-x-1 rounded-r-lg" href="/pages/master-registration.html"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">app_registration</span><span class="font-label-lg">Master Registration</span></a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/printing-station.html"><span class="material-symbols-outlined">precision_manufacturing</span><span class="font-label-lg">Printing Station</span></a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/sticker-templates.html"><span class="material-symbols-outlined">style</span><span class="font-label-lg">Sticker Templates</span></a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/printer-settings.html"><span class="material-symbols-outlined">print</span><span class="font-label-lg">Printer Settings</span></a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/reports.html"><span class="material-symbols-outlined">analytics</span><span class="font-label-lg">Reports</span></a>
+    <div class="border-t border-white/10 mt-sm pt-sm">
+      <a class="flex items-center gap-sm px-md py-sm text-error/80 hover:text-error rounded-lg transition-all" href="#" data-action="logout"><span class="material-symbols-outlined">logout</span><span class="font-label-lg">Exit System</span></a>
+    </div>
+  </nav>
+</aside>
+
+<!-- Main -->
+<main class="ml-[260px] flex-1 flex flex-col min-h-screen">
+  <header class="h-20 w-full flex items-center px-gutter justify-between bg-surface border-b border-outline-variant sticky top-0 z-40">
+    <div>
+      <h2 class="font-headline-md text-primary font-bold">Master Registration</h2>
+      <p class="text-xs text-on-surface-variant">Manage users, templates, and system settings</p>
+    </div>
+    <div class="flex items-center gap-sm">
+      <span class="font-label-lg text-on-surface font-semibold" id="headerUserName">User</span>
+      <span class="font-label-md text-on-surface-variant" id="headerUserRole">Role</span>
+      <span class="material-symbols-outlined text-primary text-3xl">account_circle</span>
+    </div>
+  </header>
+
+  <div class="p-gutter flex-1">
+    <!-- Tabs -->
+    <div class="flex gap-sm mb-lg border-b border-outline-variant pb-sm">
+      <button data-tab="users" class="px-md py-sm rounded-lg font-label-lg bg-primary text-white transition-all">Users</button>
+      <button data-tab="settings" class="px-md py-sm rounded-lg font-label-lg bg-surface-container-low text-on-surface-variant transition-all hover:bg-surface-container">App Settings</button>
+    </div>
+
+    <!-- USERS TAB -->
+    <div id="tab-users">
+      <div class="flex items-center justify-between mb-md">
+        <h3 class="font-title-lg text-primary font-bold">System Users</h3>
+        <button id="addUserBtn" class="bg-primary text-white px-md py-sm rounded-lg flex items-center gap-xs font-label-lg active:scale-95 transition-all">
+          <span class="material-symbols-outlined">person_add</span> Add User
+        </button>
+      </div>
+      <div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-surface-container-low border-b border-outline-variant">
+                <th class="px-md py-sm font-label-lg text-on-surface-variant uppercase">Name</th>
+                <th class="px-md py-sm font-label-lg text-on-surface-variant uppercase">Username</th>
+                <th class="px-md py-sm font-label-lg text-on-surface-variant uppercase">Email</th>
+                <th class="px-md py-sm font-label-lg text-on-surface-variant uppercase">Role</th>
+                <th class="px-md py-sm font-label-lg text-on-surface-variant uppercase">Status</th>
+                <th class="px-md py-sm font-label-lg text-on-surface-variant uppercase">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant" id="usersTableBody">
+              <tr><td colspan="6" class="px-md py-lg text-center text-on-surface-variant">Loading users...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div id="tab-settings" class="hidden">
+      <div class="max-w-2xl">
+        <h3 class="font-title-lg text-primary font-bold mb-md">Application Settings</h3>
+        <form id="settingsForm" class="bg-white rounded-xl border border-outline-variant shadow-sm p-lg space-y-md">
+          <div>
+            <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Company Name</label>
+            <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="sCompanyName" type="text"/>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">External SQL API URL</label>
+            <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md font-mono" id="sExternalApi" placeholder="http://your-sql-server/api" type="url"/>
+            <p class="text-xs text-on-surface-variant mt-xs">URL of your existing SQL database API for client/part data</p>
+          </div>
+          <div class="grid grid-cols-2 gap-md">
+            <div>
+              <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Timezone</label>
+              <select class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md bg-white" id="sTimezone">
+                <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+                <option value="UTC">UTC</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Date Format</label>
+              <select class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md bg-white" id="sDateFormat">
+                <option value="DD-MMM-YYYY">DD-MMM-YYYY</option>
+                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+              </select>
+            </div>
+          </div>
+          <div class="pt-sm border-t border-outline-variant">
+            <button type="submit" class="bg-primary text-white px-lg py-sm rounded-lg font-label-lg active:scale-95 transition-all">Save Settings</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- User Modal -->
+<div id="userModalOverlay" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-md">
+  <div id="userModal" class="hidden bg-white rounded-2xl shadow-2xl w-full max-w-md p-lg">
+    <div class="flex items-center justify-between mb-lg">
+      <h3 class="font-headline-md text-primary font-bold" id="userModalTitle">Add User</h3>
+      <button id="cancelUserModal" class="p-xs hover:bg-surface-container rounded-lg text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <form id="userForm" class="space-y-md">
+      <div>
+        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Full Name *</label>
+        <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="fuName" required type="text"/>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Username *</label>
+        <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="fuUsername" required type="text"/>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Email</label>
+        <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="fuEmail" type="email"/>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Role *</label>
+        <select class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md bg-white" id="fuRole">
+          <option value="Operator">Operator</option>
+          <option value="Supervisor">Supervisor</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Password <span class="font-normal normal-case">(leave blank to keep current)</span></label>
+        <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="fuPassword" placeholder="Min 6 characters" type="password"/>
+      </div>
+      <div class="flex gap-md pt-sm border-t border-outline-variant">
+        <button type="button" onclick="closeUserModal()" class="flex-1 h-11 border border-outline-variant text-on-surface rounded-lg font-label-lg hover:bg-surface-container">Cancel</button>
+        <button type="submit" class="flex-1 h-11 bg-primary text-white rounded-lg font-label-lg active:scale-95">Save User</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/public/js/api.js"></script>
+<script src="/public/js/master-registration.js"></script>
+</body></html>

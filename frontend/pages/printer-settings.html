@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Printer Settings | GoPrint Industrial Sticker Printing & Packing System</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config={darkMode:"class",theme:{extend:{"colors":{"secondary-container":"#e71520","error":"#ba1a1a","outline-variant":"#c5c5d3","on-primary":"#ffffff","on-surface":"#1b1c1c","surface":"#fbf9f8","on-secondary-fixed":"#410002","surface-container-highest":"#e4e2e2","background":"#fbf9f8","primary-container":"#2f4295","surface-dim":"#dbd9d9","outline":"#757683","secondary":"#bb0013","on-surface-variant":"#454651","on-primary-container":"#a6b4ff","error-container":"#ffdad6","primary":"#142a7d","surface-container-lowest":"#ffffff","on-background":"#1b1c1c","on-secondary":"#ffffff","surface-container":"#efeded","primary-fixed":"#dde1ff","on-error":"#ffffff","inverse-surface":"#303030","surface-container-low":"#f5f3f3","primary-fixed-dim":"#b9c3ff","surface-container-high":"#eae8e7"},"spacing":{"gutter":"24px","md":"24px","xs":"4px","sm":"12px","lg":"40px","base":"8px","margin":"32px","xl":"64px"},"fontFamily":{"label-lg":["Open Sans"],"headline-md":["Open Sans"],"title-lg":["Open Sans"],"headline-lg":["Open Sans"],"label-md":["Open Sans"],"body-md":["Open Sans"]},"fontSize":{"label-lg":["14px",{"lineHeight":"1.4","letterSpacing":"0.01em","fontWeight":"600"}],"headline-md":["24px",{"lineHeight":"1.3","fontWeight":"600"}],"title-lg":["20px",{"lineHeight":"1.4","fontWeight":"600"}],"headline-lg":["32px",{"lineHeight":"1.25","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"1.4","letterSpacing":"0.02em","fontWeight":"500"}],"body-md":["16px",{"lineHeight":"1.5","fontWeight":"400"}]}}}}
+</script>
+<style>body{font-family:'Open Sans',sans-serif;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}.sidebar-active{background:rgba(255,255,255,0.1);border-left:4px solid #bb0013;font-weight:700;}</style>
+</head>
+<body class="bg-background text-on-surface flex min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 overflow-y-auto bg-primary-container shadow-xl flex flex-col py-md z-50">
+  <div class="px-md mb-lg flex items-center gap-sm">
+    <div class="bg-white rounded-lg p-1.5 shadow-md flex items-center justify-center">
+      <img src="/public/assets/images/logo.png" alt="RSB Logo" class="h-9 w-auto object-contain max-w-[120px]" />
+    </div>
+    <div><h1 class="font-headline-md text-on-primary-container font-black leading-none tracking-tight">GoPrint</h1><p class="text-[10px] text-primary-fixed-dim opacity-80 uppercase tracking-widest">Sticker Systems</p></div>
+  </div>
+  <nav class="flex-1 space-y-xs px-xs">
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/dashboard.html"><span class="material-symbols-outlined">dashboard</span><span class="font-label-lg">Dashboard</span></a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/master-registration.html"><span class="material-symbols-outlined">app_registration</span><span class="font-label-lg">Master Registration</span></a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/printing-station.html"><span class="material-symbols-outlined">precision_manufacturing</span><span class="font-label-lg">Printing Station</span></a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/sticker-templates.html"><span class="material-symbols-outlined">style</span><span class="font-label-lg">Sticker Templates</span></a>
+    <a class="sidebar-active flex items-center gap-sm px-md py-sm text-white transition-all translate-x-1 rounded-r-lg" href="/pages/printer-settings.html"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">print</span><span class="font-label-lg">Printer Settings</span></a>
+    <a class="flex items-center gap-sm px-md py-sm text-primary-fixed-dim opacity-80 hover:opacity-100 hover:bg-white/5 transition-all rounded-lg" href="/pages/reports.html"><span class="material-symbols-outlined">analytics</span><span class="font-label-lg">Reports</span></a>
+    <div class="border-t border-white/10 mt-sm pt-sm">
+      <a class="flex items-center gap-sm px-md py-sm text-error/80 hover:text-error rounded-lg transition-all" href="#" data-action="logout"><span class="material-symbols-outlined">logout</span><span class="font-label-lg">Exit System</span></a>
+    </div>
+  </nav>
+</aside>
+
+<!-- Main -->
+<main class="ml-[260px] flex-1 flex flex-col min-h-screen">
+  <header class="h-20 w-full flex items-center px-gutter justify-between bg-surface border-b border-outline-variant sticky top-0 z-40">
+    <div>
+      <h2 class="font-headline-md text-primary font-bold">Printer Settings</h2>
+      <p class="text-xs text-on-surface-variant">Configure and manage industrial printers</p>
+    </div>
+    <div class="flex items-center gap-md">
+      <button id="addPrinterBtn" class="bg-primary text-white px-md py-sm rounded-lg flex items-center gap-xs font-label-lg active:scale-95 transition-all shadow-md hover:bg-primary-container">
+        <span class="material-symbols-outlined">add</span> Add Printer
+      </button>
+      <span class="font-label-lg text-on-surface font-semibold" id="headerUserName">User</span>
+      <span class="material-symbols-outlined text-primary text-3xl">account_circle</span>
+    </div>
+  </header>
+
+  <div class="p-gutter flex-1">
+    <!-- Printers Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-md" id="printersGrid">
+      <div class="col-span-full text-center py-xl text-on-surface-variant">Loading printers...</div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal Overlay -->
+<div id="modalOverlay" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-md">
+  <div id="printerModal" class="hidden bg-white rounded-2xl shadow-2xl w-full max-w-lg p-lg">
+    <div class="flex items-center justify-between mb-lg">
+      <h3 class="font-headline-md text-primary font-bold" id="modalTitle">Add Printer</h3>
+      <button id="cancelModalBtn" class="p-xs hover:bg-surface-container rounded-lg text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <form id="printerForm" class="space-y-md">
+      <div class="grid grid-cols-2 gap-md">
+        <div class="col-span-2"><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Printer Name *</label><input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md" id="fpName" placeholder="e.g. Honeywell PM43 - 01" required type="text"/></div>
+        <div><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Model</label><input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="fpModel" placeholder="e.g. PM43" type="text"/></div>
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Connection Type</label>
+          <select class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md bg-white" id="fpConnection" onchange="togglePrinterConnFields()">
+            <option value="ETHERNET">Ethernet (TCP/IP)</option>
+            <option value="WIFI">WiFi (TCP/IP)</option>
+            <option value="USB">USB (Direct)</option>
+          </select>
+        </div>
+        <!-- IP / Port fields (hidden when USB) -->
+        <div id="fpIpGroup">
+          <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">IP Address</label>
+          <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md font-mono" id="fpIp" placeholder="192.168.1.104" type="text"/>
+        </div>
+        <div id="fpPortGroup">
+          <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Port</label>
+          <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="fpPort" type="number" value="9100"/>
+        </div>
+        <!-- USB Port field (shown only when USB) -->
+        <div id="fpUsbPortGroup" class="hidden col-span-2">
+          <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Windows USB Port (e.g. USB001)</label>
+          <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md font-mono" id="fpUsbPort" placeholder="USB001" type="text"/>
+          <p class="text-[10px] text-on-surface-variant mt-xs">Check in Device Manager → Ports. Leave blank to auto-detect via printer name.</p>
+        </div>
+        <div><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Print Language</label>
+          <select class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md bg-white" id="fpLanguage">
+            <option value="ZPL">ZPL II (Zebra/Honeywell)</option><option value="EPL">EPL</option><option value="IPL">IPL (Intermec)</option><option value="FINGERPRINT">Fingerprint (Honeywell)</option>
+          </select>
+        </div>
+        <div><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Darkness (0-30)</label><input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="fpDarkness" max="30" min="0" type="number" value="25"/></div>
+        <div><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Print Speed (1-14)</label><input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="fpSpeed" max="14" min="1" type="number" value="6"/></div>
+        <div><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Label Width (mm)</label><input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="fpWidth" type="number" value="100"/></div>
+        <div><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Label Height (mm)</label><input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="fpHeight" type="number" value="150"/></div>
+        <div class="col-span-2 flex items-center gap-sm">
+          <input class="w-4 h-4 accent-primary" id="fpDefault" type="checkbox"/>
+          <label class="font-label-lg text-on-surface cursor-pointer" for="fpDefault">Set as default printer</label>
+        </div>
+      </div>
+      <div class="flex gap-md pt-sm border-t border-outline-variant">
+        <button type="button" id="cancelModalBtn2" onclick="closeModal()" class="flex-1 h-11 border border-outline-variant text-on-surface rounded-lg font-label-lg hover:bg-surface-container transition-all">Cancel</button>
+        <button type="submit" class="flex-1 h-11 bg-primary text-white rounded-lg font-label-lg hover:bg-primary-container active:scale-95 transition-all">Save Printer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/public/js/api.js"></script>
+<script src="/public/js/printer-settings.js"></script>
+</body></html>
