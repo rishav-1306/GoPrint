@@ -67,8 +67,8 @@ router.get('/next-serial', authenticate, async (req, res, next) => {
 
     const count = parseInt(countResult.rows[0]?.cnt || countResult.rows[0]?.count || 0);
     const nextSerial = count + 1;
-    // Zero-pad to 7 digits
-    const serialNumber = String(nextSerial).padStart(7, '0');
+    // Zero-pad to 6 digits
+    const serialNumber = String(nextSerial).padStart(6, '0');
 
     return res.json({
       success: true,

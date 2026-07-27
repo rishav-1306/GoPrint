@@ -32,23 +32,30 @@
  */
 
 /**
- * Format a date for the 32-digit code: YYMMDD
+ * Format a date for the composite code: DDMMYYYY
  * @param {string|Date} date
- * @returns {string} 6-char date string e.g. "250726"
+ * @returns {string} 8-char date string e.g. "27072026"
  */
-const formatDateYYMMDD = (date) => {
+const formatDateDDMMYYYY = (date) => {
   if (!date) {
     const now = new Date();
-    const yy = String(now.getFullYear()).slice(-2);
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
     const dd = String(now.getDate()).padStart(2, '0');
-    return `${yy}${mm}${dd}`;
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const yyyy = String(now.getFullYear());
+    return `${dd}${mm}${yyyy}`;
+  }
+  if (typeof date === 'string' && date.includes('-')) {
+    const parts = date.split('T')[0].split('-');
+    if (parts.length === 3) {
+      const [y, m, d] = parts;
+      return `${String(d).padStart(2, '0')}${String(m).padStart(2, '0')}${y}`;
+    }
   }
   const d = new Date(date);
-  const yy = String(d.getFullYear()).slice(-2);
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
   const dd = String(d.getDate()).padStart(2, '0');
-  return `${yy}${mm}${dd}`;
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const yyyy = String(d.getFullYear());
+  return `${dd}${mm}${yyyy}`;
 };
 
 /**
@@ -75,29 +82,27 @@ const fixLen = (str, len) => {
 const trunc = (str, max) => str ? String(str).substring(0, max) : '';
 
 /**
- * Build the 32-character composite code
- * Composition (total = 32 chars):
+ * Build the composite code
+ * Composition:
  *   partNumber   → 8 chars  (truncated/padded, uppercase, no spaces)
  *   revisionLevel→ 2 chars
- *   vendorCode   → 3 chars
- *   mfgDate      → 6 chars  (YYMMDD)
- *   serialNumber → 7 chars  (zero-padded numeric)
+ *   vendorCode   → Full vendor code (uppercase, no spaces)
+ *   mfgDate      → 8 chars  (DDMMYYYY)
+ *   serialNumber → 6 chars  (zero-padded numeric)
  *   clientName   → 6 chars  (truncated, uppercase, no spaces)
  *
  * @param {Object} params
- * @returns {string} 32-character code
+ * @returns {string} composite code
  */
 const build32DigitCode = ({ partNumber, revisionLevel, vendorCode, mfgDate, serialNumber, clientName }) => {
-  const part   = fixLen(partNumber,    8);   // 8
-  const rev    = fixLen(revisionLevel, 2);   // 2
-  const vendor = fixLen(vendorCode,    3);   // 3
-  const date   = formatDateYYMMDD(mfgDate);  // 6
-  const serial = String(serialNumber || '0').replace(/\D/g, '').padStart(7, '0').slice(-7); // 7
-  const client = fixLen(clientName,    6);   // 6
+  const part   = fixLen(partNumber, 8);
+  const rev    = fixLen(revisionLevel, 2);
+  const vendor = String(vendorCode || '').toUpperCase().replace(/\s+/g, '');
+  const date   = formatDateDDMMYYYY(mfgDate);
+  const serial = String(serialNumber || '0').replace(/\D/g, '').padStart(6, '0').slice(-6);
+  const client = fixLen(clientName, 6);
 
-  const code = `${part}${rev}${vendor}${date}${serial}${client}`;
-  // Ensure exactly 32 chars
-  return code.substring(0, 32).padEnd(32, ' ');
+  return `${part}${rev}${vendor}${date}${serial}${client}`;
 };
 
 /**
@@ -158,16 +163,16 @@ const generateZPL = ({
   const QR_X         = labelWidthDots - QR_SIZE - MARGIN; // QR left edge
   const TEXT_AREA_W   = QR_X - MARGIN * 2;               // text area width
 
-  // Font sizes — large bold monospace-style for the 32-char code
+  // Font sizes — monospace-style for the variable-length composite code
   // ^A0 = built-in scalable font (closest to monospace)
-  const CODE_FONT_H   = 200; // font height for 32-digit code (large)
+  const CODE_FONT_H   = 220; // font height for composite code (size 20 equivalent)
   const CODE_FONT_W   = 190;
-  const DESC_FONT_H   = 160; // font height for description line
-  const DESC_FONT_W   = 150;
+  const DESC_FONT_H   = 180; // font height for description line (size 18 equivalent)
+  const DESC_FONT_W   = 160;
 
   // Vertical positions
-  const CODE_Y        = 100;  // Y for 32-digit code line
-  const DESC_Y        = 900;  // Y for description/JT line (roughly bottom half)
+  const CODE_Y        = 250;  // Y for composite code line
+  const DESC_Y        = 1050; // Y for description/JT line
 
   // JT label separator — space between description and JT
   const JT_TEXT       = jtNumber ? `JT ${trunc(jtNumber, 20)}` : '';
@@ -183,16 +188,12 @@ const generateZPL = ({
     `^LL${labelHeightDots}`,               // Label length in dots
     `^LH0,0`,                              // Label home (top-left origin)
 
-    // ---- ROW 1: 32-DIGIT CODE (large, bold) ----
-    // Prints the entire 32-char code on a single line in bold
+    // ---- ROW 1: COMPOSITE CODE (extra large, bold) ----
+    // Prints the entire composite code on a single line in bold
     `^FO${MARGIN},${CODE_Y}`,
     `^A0N,${CODE_FONT_H},${CODE_FONT_W}`,
     `^FB${TEXT_AREA_W},1,,`,
     `^FD${code32.trim()}^FS`,
-
-    // ---- HORIZONTAL DIVIDER ----
-    `^FO${MARGIN},${Math.round((CODE_Y + CODE_FONT_H + 50 + DESC_Y) / 2)}`,
-    `^GB${TEXT_AREA_W},4,4^FS`,
 
     // ---- ROW 2: PART DESCRIPTION ----
     `^FO${MARGIN},${DESC_Y}`,
@@ -249,4 +250,4 @@ const generateTestZPL = ({ darkness = 25, speed = 6, labelWidthMm = 1000, labelH
   ].join('\n');
 };
 
-module.exports = { generateZPL, generateTestZPL, formatDate, formatDateYYMMDD, build32DigitCode };
+module.exports = { generateZPL, generateTestZPL, formatDate, formatDateDDMMYYYY, build32DigitCode };

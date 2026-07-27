@@ -21,6 +21,7 @@ const MOCK_CLIENTS = [
   { id: 'C006', name: 'MARUTI SUZUKI', address: 'Manesar, Haryana, India' },
   { id: 'C007', name: 'HYUNDAI MOTORS INDIA', address: 'Sriperumbudur, Tamil Nadu, India' },
   { id: 'C008', name: 'MAHINDRA & MAHINDRA', address: 'Nashik, Maharashtra, India' },
+  { id: 'C009', name: 'ASHOK LEYLAND', address: 'Chennai, Tamil Nadu, India' },
 ];
 
 const MOCK_PARTS = {
@@ -68,6 +69,16 @@ const MOCK_PARTS = {
       jtNumber: 'JT 300 L 600', afmCode: 'AFM-2024-020',
       dealer: 'JCB INDIA LIMITED',
       clientAddress: 'Ballabgarh, Haryana 121004',
+    },
+  ],
+  C009: [
+    {
+      id: 'P006', partNumber: 'PD601549', clientId: 'C009',
+      description: 'S/F R/HSG TUBE ASSY', revisionLevel: 'NA',
+      vendorCode: '7200868', vendorName: 'RSB TRANSMISSIONS PVT LTD',
+      jtNumber: '590L', afmCode: 'AFM-2024-030',
+      dealer: 'ASHOK LEYLAND',
+      clientAddress: 'Chennai, Tamil Nadu, India',
     },
   ],
 };

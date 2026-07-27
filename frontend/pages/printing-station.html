@@ -188,6 +188,42 @@
 
       <!-- Center/Right: Form & Preview -->
       <div class="col-span-12 lg:col-span-8 space-y-md">
+        <!-- Sticker Preview Panel -->
+        <section class="glass-panel rounded-xl p-md shadow-md border-dashed border-2 border-outline-variant">
+          <div class="flex items-center gap-xs mb-md text-outline">
+            <span class="material-symbols-outlined">visibility</span>
+            <h3 class="font-label-lg uppercase tracking-widest">Real-time Sticker Preview</h3>
+          </div>
+          <div class="bg-white p-lg flex flex-col items-center justify-center border border-outline-variant rounded min-h-[280px]">
+            <!-- STICKER PREVIEW CARD — matches 1000mm × 250mm physical template -->
+          <div class="w-full bg-white border-2 border-gray-400 rounded-lg shadow-md font-mono text-black overflow-hidden" style="aspect-ratio:4/1; max-width:100%;">
+            <div class="flex h-full">
+              <!-- LEFT TEXT AREA -->
+              <div class="flex-1 flex flex-col justify-center px-6 py-4 space-y-4 min-w-0">
+                <!-- Row 1: Composite code (20px font size) -->
+                <p class="text-[20px] font-black tracking-tight leading-tight break-all uppercase" id="preview32Code" style="font-family:'Courier New',Courier,monospace; font-size:20px;">--------------------------------</p>
+                <!-- Row 2: Part Description | JT Number (18px font size) -->
+                <div class="flex items-center gap-6 flex-wrap">
+                  <p class="text-[18px] font-black tracking-tight uppercase" id="previewDescription" style="font-family:'Courier New',Courier,monospace; font-size:18px;">---</p>
+                  <p class="text-[18px] font-black tracking-tight uppercase" id="previewJtLabel" style="font-family:'Courier New',Courier,monospace; font-size:18px;"></p>
+                </div>
+              </div>
+              <!-- RIGHT: QR CODE -->
+              <div class="flex-shrink-0 flex items-center justify-center border-l-2 border-gray-400 p-2" style="width:22%;">
+                <div class="w-full h-full flex items-center justify-center">
+                  <img id="previewQrImage" src="" alt="QR Code" class="w-full h-full object-contain" style="display:none;"/>
+                  <div id="previewQrPlaceholder" class="flex flex-col items-center opacity-30">
+                    <span class="material-symbols-outlined text-[52px]" style="font-variation-settings:'FILL' 1;">qr_code_2</span>
+                    <span class="text-[9px] text-gray-400 mt-1">QR Preview</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="mt-md text-xs text-outline italic">Label: 1000mm × 250mm | QR encodes the composite code. Actual print may vary by printer calibration.</p>
+          </div>
+        </section>
+
         <!-- Sticker Details Form -->
         <section class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
           <div class="bg-secondary-container px-md py-sm flex justify-between items-center">
@@ -240,7 +276,7 @@
                 <div class="w-full h-12 rounded-lg border-2 border-primary/30 bg-primary/5 px-sm flex items-center justify-between">
                   <div class="flex items-center gap-xs">
                     <span class="material-symbols-outlined text-primary text-[16px]">tag</span>
-                    <span class="font-mono font-black text-primary text-[17px] tracking-widest" id="serialNumberDisplay">-------</span>
+                    <span class="font-mono font-black text-primary text-[17px] tracking-widest" id="serialNumberDisplay">------</span>
                   </div>
                   <div class="flex items-center gap-xs">
                     <span class="text-[9px] uppercase font-bold text-primary/60 bg-primary/10 px-xs py-0.5 rounded">Auto</span>
@@ -273,44 +309,6 @@
                 <label class="font-label-md">Step 6: Quantity *</label>
               </div>
             </div>
-          </div>
-        </section>
-
-        <!-- Sticker Preview Panel -->
-        <section class="glass-panel rounded-xl p-md shadow-md border-dashed border-2 border-outline-variant">
-          <div class="flex items-center gap-xs mb-md text-outline">
-            <span class="material-symbols-outlined">visibility</span>
-            <h3 class="font-label-lg uppercase tracking-widest">Real-time Sticker Preview</h3>
-          </div>
-          <div class="bg-white p-lg flex flex-col items-center justify-center border border-outline-variant rounded min-h-[280px]">
-            <!-- STICKER PREVIEW CARD — matches 1000mm × 250mm physical template -->
-          <div class="w-full bg-white border-2 border-gray-400 rounded-lg shadow-md font-mono text-black overflow-hidden" style="aspect-ratio:4/1; max-width:100%;">
-            <div class="flex h-full">
-              <!-- LEFT TEXT AREA -->
-              <div class="flex-1 flex flex-col justify-center px-5 py-3 space-y-3 min-w-0">
-                <!-- Row 1: 32-digit code -->
-                <p class="text-[13px] sm:text-[15px] font-black tracking-tight leading-tight break-all uppercase" id="preview32Code" style="font-family:'Courier New',Courier,monospace;">--------------------------------</p>
-                <!-- Divider -->
-                <div class="border-t-2 border-gray-400"></div>
-                <!-- Row 2: Part Description | JT Number -->
-                <div class="flex items-center gap-4 flex-wrap">
-                  <p class="text-[12px] sm:text-[14px] font-black tracking-tight uppercase" id="previewDescription" style="font-family:'Courier New',Courier,monospace;">---</p>
-                  <p class="text-[12px] sm:text-[14px] font-black tracking-tight uppercase ml-4" id="previewJtLabel" style="font-family:'Courier New',Courier,monospace;"></p>
-                </div>
-              </div>
-              <!-- RIGHT: QR CODE -->
-              <div class="flex-shrink-0 flex items-center justify-center border-l-2 border-gray-400 p-2" style="width:22%;">
-                <div class="w-full h-full flex items-center justify-center">
-                  <img id="previewQrImage" src="" alt="QR Code" class="w-full h-full object-contain" style="display:none;"/>
-                  <div id="previewQrPlaceholder" class="flex flex-col items-center opacity-30">
-                    <span class="material-symbols-outlined text-[52px]" style="font-variation-settings:'FILL' 1;">qr_code_2</span>
-                    <span class="text-[9px] text-gray-400 mt-1">QR Preview</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <p class="mt-md text-xs text-outline italic">Label: 1000mm × 250mm | QR encodes the 32-digit composite code. Actual print may vary by printer calibration.</p>
           </div>
         </section>
       </div>

@@ -302,7 +302,7 @@ async function fetchNextSerial() {
  */
 function resetSerialDisplay() {
   const display = document.getElementById('serialNumberDisplay');
-  if (display) display.textContent = '-------';
+  if (display) display.textContent = '------';
   setField('serialNumber', '');
 }
 
@@ -325,36 +325,45 @@ async function updateStickerPreview() {
   const clientName    = selectedClient?.name        || '';
   const revisionLevel = selectedPart?.revisionLevel || '';
 
-  // ---- Build 32-digit code (same logic as backend build32DigitCode) ----
+  // ---- Build composite code (same logic as backend build32DigitCode) ----
   const build32Code = () => {
     const fixLen = (s, n) => {
       const v = String(s || '').toUpperCase().replace(/\s+/g, '');
       return v.substring(0, n).padEnd(n, ' ').substring(0, n);
     };
-    const formatDateYYMMDD = (dt) => {
+    const formatDateDDMMYYYY = (dt) => {
       if (!dt) {
         const now = new Date();
-        return String(now.getFullYear()).slice(-2)
-          + String(now.getMonth() + 1).padStart(2, '0')
-          + String(now.getDate()).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const yyyy = String(now.getFullYear());
+        return `${dd}${mm}${yyyy}`;
+      }
+      if (typeof dt === 'string' && dt.includes('-')) {
+        const parts = dt.split('T')[0].split('-');
+        if (parts.length === 3) {
+          const [y, m, d] = parts;
+          return `${String(d).padStart(2, '0')}${String(m).padStart(2, '0')}${y}`;
+        }
       }
       const d = new Date(dt);
-      return String(d.getFullYear()).slice(-2)
-        + String(d.getMonth() + 1).padStart(2, '0')
-        + String(d.getDate()).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const yyyy = String(d.getFullYear());
+      return `${dd}${mm}${yyyy}`;
     };
-    const part   = fixLen(partNumber,    8);
+    const part   = fixLen(partNumber, 8);
     const rev    = fixLen(revisionLevel, 2);
-    const vendor = fixLen(vendorCode,    3);
-    const date   = formatDateYYMMDD(mfgDate);
-    const serial = String(serialNumber || '0').replace(/\D/g, '').padStart(7, '0').slice(-7);
-    const client = fixLen(clientName,   6);
-    return `${part}${rev}${vendor}${date}${serial}${client}`.substring(0, 32).padEnd(32, ' ');
+    const vendor = String(vendorCode || '').toUpperCase().replace(/\s+/g, '');
+    const date   = formatDateDDMMYYYY(mfgDate);
+    const serial = String(serialNumber || '0').replace(/\D/g, '').padStart(6, '0').slice(-6);
+    const client = fixLen(clientName, 6);
+    return `${part}${rev}${vendor}${date}${serial}${client}`;
   };
 
   const code32 = build32Code();
 
-  // Update the 32-digit code display
+  // Update the code display
   setElement('preview32Code', code32);
 
   // Update description and JT label
