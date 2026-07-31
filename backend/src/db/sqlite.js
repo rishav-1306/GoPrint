@@ -137,6 +137,42 @@ const initSqlite = async () => {
           );
         `);
 
+        db.run(`
+          CREATE TABLE IF NOT EXISTS clients (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            address TEXT,
+            code TEXT,
+            contact_person TEXT,
+            contact_phone TEXT,
+            contact_email TEXT,
+            is_active INTEGER NOT NULL DEFAULT 1,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+          );
+        `);
+
+        db.run(`
+          CREATE TABLE IF NOT EXISTS parts (
+            id TEXT PRIMARY KEY,
+            client_id TEXT NOT NULL,
+            client_name TEXT,
+            part_number TEXT NOT NULL,
+            description TEXT NOT NULL,
+            jt_number TEXT,
+            vendor_code TEXT,
+            revision_level TEXT,
+            vendor_name TEXT,
+            dealer TEXT,
+            afm_code TEXT,
+            client_address TEXT,
+            is_active INTEGER NOT NULL DEFAULT 1,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (client_id) REFERENCES clients(id)
+          );
+        `);
+
         // Seed default admin user (Admin@123)
         const adminHash = '$2a$10$SR3Fp4GI4GhYfZc5IXNGK.MrVmufLNdXyoYmVaSAm4DEGdJ0f6UtS';
         const operatorHash = '$2a$10$wUet.pr0vfeqV53Gg66Da.ornjxocw8mr74iCGXx2ZpVuAiHrzpJC';
@@ -149,6 +185,41 @@ const initSqlite = async () => {
 
         // Seed application settings
         db.run(`INSERT OR IGNORE INTO application_settings (id, company_name) VALUES (1, 'RSB Transmissions')`);
+
+        // Seed default clients if clients table is empty
+        const clientCount = await allSql(`SELECT COUNT(*) as count FROM clients`);
+        if (clientCount && clientCount[0] && clientCount[0].count === 0) {
+          const defaultClients = [
+            ['C001', 'TATA HITACHI', 'Dharwad, Karnataka, India', 'TH01', 'Logistics Dept', '+91 9876543210', 'contact@tatahitachi.com'],
+            ['C002', 'CATERPILLAR INDIA', 'Thiruvallur, Tamil Nadu, India', 'CAT01', 'Supply Chain', '+91 9876543211', 'contact@caterpillar.com'],
+            ['C003', 'JCB INDIA LIMITED', 'Ballabgarh, Haryana, India', 'JCB01', 'Plant Manager', '+91 9876543212', 'contact@jcb.com'],
+            ['C004', 'KOMATSU INDIA', 'Oragadam, Tamil Nadu, India', 'KOM01', 'Operations', '+91 9876543213', 'contact@komatsu.com'],
+            ['C005', 'BEML LIMITED', 'Mysuru, Karnataka, India', 'BEML01', 'Procurement', '+91 9876543214', 'contact@beml.com'],
+            ['C006', 'MARUTI SUZUKI', 'Manesar, Haryana, India', 'MS01', 'Quality Lead', '+91 9876543215', 'contact@maruti.com'],
+            ['C007', 'HYUNDAI MOTORS INDIA', 'Sriperumbudur, Tamil Nadu, India', 'HYU01', 'Vendor Management', '+91 9876543216', 'contact@hyundai.com'],
+            ['C008', 'MAHINDRA & MAHINDRA', 'Nashik, Maharashtra, India', 'MM01', 'Dispatch Control', '+91 9876543217', 'contact@mahindra.com'],
+            ['C009', 'ASHOK LEYLAND', 'Chennai, Tamil Nadu, India', 'AL01', 'Packing Desk', '+91 9876543218', 'contact@ashokleyland.com']
+          ];
+          for (const c of defaultClients) {
+            db.run(`INSERT INTO clients (id, name, address, code, contact_person, contact_phone, contact_email) VALUES (?, ?, ?, ?, ?, ?, ?)`, c);
+          }
+        }
+
+        // Seed default parts if parts table is empty
+        const partCount = await allSql(`SELECT COUNT(*) as count FROM parts`);
+        if (partCount && partCount[0] && partCount[0].count === 0) {
+          const defaultParts = [
+            ['P001', 'C001', 'TATA HITACHI', '4004100217-0J23', 'ASSY PROP SHAFT FRONT', 'JT 123 L 413', 'RSB-V66', 'REV-04', 'RSB TRANSMISSIONS PVT LTD', 'TATA HITACHI CONSTRUCTION MACHINERY', 'AFM-2024-001', 'Dharwad, Karnataka 580001'],
+            ['P002', 'C001', 'TATA HITACHI', '4004100218-0J23', 'ASSY PROP SHAFT REAR', 'JT 124 L 413', 'RSB-V67', 'REV-02', 'RSB TRANSMISSIONS PVT LTD', 'TATA HITACHI CONSTRUCTION MACHINERY', 'AFM-2024-002', 'Dharwad, Karnataka 580001'],
+            ['P003', 'C001', 'TATA HITACHI', '4004100219-0J24', 'BEARING COVER SEAL TYPE B', 'JT 125 L 414', 'RSB-V68', 'REV-01', 'RSB TRANSMISSIONS PVT LTD', 'TATA HITACHI CONSTRUCTION MACHINERY', 'AFM-2024-003', 'Dharwad, Karnataka 580001'],
+            ['P004', 'C002', 'CATERPILLAR INDIA', 'CAT-PS-4441-A', 'PROPELLER SHAFT ASSEMBLY CAT 320', 'JT 200 L 500', 'RSB-V70', 'REV-03', 'RSB TRANSMISSIONS PVT LTD', 'CATERPILLAR INDIA PVT LTD', 'AFM-2024-010', 'Thiruvallur, Tamil Nadu 600001'],
+            ['P005', 'C003', 'JCB INDIA LIMITED', 'JCB-DRV-3CX-001', 'DRIVE SHAFT FRONT JCB 3CX', 'JT 300 L 600', 'RSB-V80', 'REV-05', 'RSB TRANSMISSIONS PVT LTD', 'JCB INDIA LIMITED', 'AFM-2024-020', 'Ballabgarh, Haryana 121004'],
+            ['P006', 'C009', 'ASHOK LEYLAND', 'PD601549', 'S/F R/HSG TUBE ASSY', '590L', '7200868', 'NA', 'RSB TRANSMISSIONS PVT LTD', 'ASHOK LEYLAND', 'AFM-2024-030', 'Chennai, Tamil Nadu, India']
+          ];
+          for (const p of defaultParts) {
+            db.run(`INSERT INTO parts (id, client_id, client_name, part_number, description, jt_number, vendor_code, revision_level, vendor_name, dealer, afm_code, client_address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, p);
+          }
+        }
 
         resolve();
       } catch (err) {

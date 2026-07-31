@@ -499,7 +499,7 @@ function clearPartAutoFields() {
 }
 
 function clearManualFields() {
-  setField('quantity', '');
+  setField('quantity', '1');
   resetSerialDisplay();
   // Reset MFG date to today (not blank)
   const mfgDate = document.getElementById('mfgDate');

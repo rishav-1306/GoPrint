@@ -53,6 +53,7 @@
     <!-- Tabs -->
     <div class="flex gap-sm mb-lg border-b border-outline-variant pb-sm">
       <button data-tab="users" class="px-md py-sm rounded-lg font-label-lg bg-primary text-white transition-all">Users</button>
+      <button data-tab="parts" class="px-md py-sm rounded-lg font-label-lg bg-surface-container-low text-on-surface-variant transition-all hover:bg-surface-container">Part Specifications</button>
       <button data-tab="settings" class="px-md py-sm rounded-lg font-label-lg bg-surface-container-low text-on-surface-variant transition-all hover:bg-surface-container">App Settings</button>
     </div>
 
@@ -79,6 +80,44 @@
             </thead>
             <tbody class="divide-y divide-outline-variant" id="usersTableBody">
               <tr><td colspan="6" class="px-md py-lg text-center text-on-surface-variant">Loading users...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PART SPECIFICATIONS TAB -->
+    <div id="tab-parts" class="hidden">
+      <div class="flex items-center justify-between mb-md">
+        <div>
+          <h3 class="font-title-lg text-primary font-bold">Part Specification Master</h3>
+          <p class="text-xs text-on-surface-variant">Register parts, clients, vendor codes, revision levels, JT numbers, and printing specs in system database</p>
+        </div>
+        <div id="adminPartActions">
+          <button id="addPartBtn" class="bg-primary text-white px-md py-sm rounded-lg flex items-center gap-xs font-label-lg active:scale-95 transition-all shadow-md">
+            <span class="material-symbols-outlined">post_add</span> Add Part Specification
+          </button>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-surface-container-low border-b border-outline-variant text-[11px] font-bold text-on-surface-variant uppercase">
+                <th class="px-sm py-sm">Client</th>
+                <th class="px-sm py-sm">Part No</th>
+                <th class="px-sm py-sm">Part Description</th>
+                <th class="px-sm py-sm">JT No</th>
+                <th class="px-sm py-sm">Vendor Code</th>
+                <th class="px-sm py-sm">Rev Level</th>
+                <th class="px-sm py-sm">Vendor Name</th>
+                <th class="px-sm py-sm">Dealer</th>
+                <th class="px-sm py-sm">AFM Code</th>
+                <th class="px-sm py-sm">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant text-xs" id="partsTableBody">
+              <tr><td colspan="10" class="px-md py-lg text-center text-on-surface-variant">Loading part masters...</td></tr>
             </tbody>
           </table>
         </div>
@@ -160,6 +199,79 @@
       <div class="flex gap-md pt-sm border-t border-outline-variant">
         <button type="button" onclick="closeUserModal()" class="flex-1 h-11 border border-outline-variant text-on-surface rounded-lg font-label-lg hover:bg-surface-container">Cancel</button>
         <button type="submit" class="flex-1 h-11 bg-primary text-white rounded-lg font-label-lg active:scale-95">Save User</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Part Specification Modal (ADMIN ONLY - All 9 Sticker Specification Database Fields) -->
+<div id="partModalOverlay" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-md">
+  <div id="partModal" class="hidden bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-lg overflow-y-auto max-h-[90vh]">
+    <div class="flex items-center justify-between mb-md border-b border-outline-variant pb-sm">
+      <div>
+        <h3 class="font-headline-md text-primary font-bold" id="partModalTitle">Add Part Specification</h3>
+        <p class="text-xs text-on-surface-variant">Enter all 9 sticker fields required for database registration</p>
+      </div>
+      <button id="cancelPartModal" class="p-xs hover:bg-surface-container rounded-lg text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <form id="partForm" class="space-y-md">
+      <!-- 1. Client -->
+      <div>
+        <label class="block text-xs font-bold text-primary uppercase mb-xs">1. Client Name *</label>
+        <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md uppercase font-bold" id="fpClientInput" placeholder="e.g. ASHOK LEYLAND" required type="text"/>
+      </div>
+
+      <!-- 2. Part No & 3. Part Description -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+        <div>
+          <label class="block text-xs font-bold text-primary uppercase mb-xs">2. Part No *</label>
+          <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md font-mono uppercase font-bold" id="fpPartNumber" placeholder="e.g. PD601549" required type="text"/>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-primary uppercase mb-xs">3. Part Description *</label>
+          <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md uppercase font-bold" id="fpDescription" placeholder="e.g. S/F R/HSG TUBE ASSY" required type="text"/>
+        </div>
+      </div>
+
+      <!-- 4. JT No & 5. Vendor Code -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">4. JT No</label>
+          <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md uppercase font-mono" id="fpJtNumber" placeholder="e.g. 590L" type="text"/>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">5. Vendor Code</label>
+          <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md font-mono" id="fpVendorCode" placeholder="e.g. 7200868" type="text"/>
+        </div>
+      </div>
+
+      <!-- 6. Revision Level & 7. Vendor Name -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">6. Revision Level</label>
+          <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md uppercase" id="fpRevisionLevel" placeholder="e.g. REV-04 (or NA)" type="text"/>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">7. Vendor Name</label>
+          <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md uppercase" id="fpVendorName" placeholder="RSB TRANSMISSIONS PVT LTD" type="text"/>
+        </div>
+      </div>
+
+      <!-- 8. Dealer & 9. AFM Code -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">8. Dealer</label>
+          <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md uppercase" id="fpDealer" placeholder="e.g. ASHOK LEYLAND" type="text"/>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">9. AFM Code</label>
+          <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md uppercase font-mono" id="fpAfmCode" placeholder="e.g. AFM-2024-030" type="text"/>
+        </div>
+      </div>
+
+      <div class="flex gap-md pt-md border-t border-outline-variant">
+        <button type="button" onclick="closePartModal()" class="flex-1 h-11 border border-outline-variant text-on-surface rounded-lg font-label-lg hover:bg-surface-container">Cancel</button>
+        <button type="submit" class="flex-1 h-11 bg-primary text-white rounded-lg font-label-lg active:scale-95 shadow-md font-bold">Save Part Specification</button>
       </div>
     </form>
   </div>

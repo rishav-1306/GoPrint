@@ -103,10 +103,17 @@ const api = {
 
   // Clients
   getClients: () => request('GET', '/clients'),
+  addClient: (data) => request('POST', '/clients', data),
+  updateClient: (id, data) => request('PUT', `/clients/${id}`, data),
+  deleteClient: (id) => request('DELETE', `/clients/${id}`),
 
   // Parts
-  getParts: (clientId) => request('GET', `/parts?clientId=${clientId}`),
+  getParts: (clientId) => request('GET', `/parts${clientId ? '?clientId=' + clientId : ''}`),
+  getAllParts: () => request('GET', '/parts?all=true'),
   getPartDetails: (partId) => request('GET', `/parts/${partId}`),
+  addPart: (data) => request('POST', '/parts', data),
+  updatePart: (id, data) => request('PUT', `/parts/${id}`, data),
+  deletePart: (id) => request('DELETE', `/parts/${id}`),
 
   // Printers
   getPrinters: () => request('GET', '/printers'),

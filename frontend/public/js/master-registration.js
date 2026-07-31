@@ -1,5 +1,5 @@
 /**
- * Master Registration Page Logic — Users, Settings
+ * Master Registration Page Logic — Users, Part Specifications, Settings
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 let activeTab = 'users';
 let editingUserId = null;
+let editingPartId = null;
 
 async function switchTab(tab) {
   activeTab = tab;
@@ -32,10 +33,18 @@ async function switchTab(tab) {
   });
   const activeBtn = document.querySelector(`[data-tab="${tab}"]`);
   if (activeBtn) { activeBtn.classList.add('bg-primary','text-white'); activeBtn.classList.remove('bg-surface-container-low','text-on-surface-variant'); }
+
+  // Hide all tab contents
+  ['users', 'parts', 'settings'].forEach(t => {
+    const el = document.getElementById(`tab-${t}`);
+    if (el) el.classList.add('hidden');
+  });
+
   const content = document.getElementById(`tab-${tab}`);
   if (content) content.classList.remove('hidden');
 
   if (tab === 'users') await loadUsers();
+  if (tab === 'parts') await loadPartsMaster();
   if (tab === 'settings') await loadSettings();
 }
 
@@ -45,10 +54,10 @@ async function switchTab(tab) {
 async function loadUsers() {
   const tbody = document.getElementById('usersTableBody');
   if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="6" class="px-md py-lg text-center text-on-surface-variant">Loading...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="6" class="px-md py-lg text-center text-on-surface-variant">Loading users...</td></tr>';
   try {
     const { data } = await api.getUsers();
-    if (!data.length) { tbody.innerHTML = '<tr><td colspan="6" class="px-md py-lg text-center text-on-surface-variant">No users found.</td></tr>'; return; }
+    if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="6" class="px-md py-lg text-center text-on-surface-variant">No users found.</td></tr>'; return; }
     tbody.innerHTML = data.map(u => `
       <tr class="hover:bg-surface-container-low transition-colors">
         <td class="px-md py-md font-body-md font-semibold">${u.name}</td>
@@ -108,6 +117,165 @@ async function deleteUser(id, name) {
 }
 
 // ============================================================
+// PART SPECIFICATION MASTER TAB (TEXT CLIENT INPUT, ALL 9 STICKER FIELDS - ADMIN ONLY)
+// ============================================================
+async function loadPartsMaster() {
+  const tbody = document.getElementById('partsTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="10" class="px-md py-lg text-center text-on-surface-variant">Loading part specifications...</td></tr>';
+
+  const user = Auth.getUser();
+  const isAdmin = user && user.role === 'Admin';
+
+  const adminPartActionsDiv = document.getElementById('adminPartActions');
+  if (adminPartActionsDiv) {
+    if (isAdmin) {
+      adminPartActionsDiv.innerHTML = `
+        <button id="addPartBtn" class="bg-primary text-white px-md py-sm rounded-lg flex items-center gap-xs font-label-lg active:scale-95 transition-all shadow-md">
+          <span class="material-symbols-outlined">post_add</span> Add Part Specification
+        </button>`;
+      document.getElementById('addPartBtn')?.addEventListener('click', () => openPartModal());
+    } else {
+      adminPartActionsDiv.innerHTML = `
+        <span class="px-3 py-1.5 bg-surface-container-high text-on-surface-variant rounded-lg text-xs font-bold uppercase flex items-center gap-1" title="Only Admin can add or modify part specifications">
+          <span class="material-symbols-outlined text-[16px]">lock</span> Add Part Specification (Admin Only)
+        </span>`;
+    }
+  }
+
+  try {
+    const { data } = await api.getAllParts();
+    if (!data || !data.length) {
+      tbody.innerHTML = '<tr><td colspan="10" class="px-md py-lg text-center text-on-surface-variant">No part specifications registered yet.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map(p => `
+      <tr class="hover:bg-surface-container-low transition-colors">
+        <td class="px-sm py-sm font-bold text-on-surface">${p.clientName || p.clientId}</td>
+        <td class="px-sm py-sm font-mono font-bold text-primary">${p.partNumber}</td>
+        <td class="px-sm py-sm font-semibold max-w-xs truncate">${p.description}</td>
+        <td class="px-sm py-sm font-mono">${p.jtNumber || '---'}</td>
+        <td class="px-sm py-sm font-mono">${p.vendorCode || '---'}</td>
+        <td class="px-sm py-sm font-mono"><span class="px-1.5 py-0.5 rounded bg-surface-container-highest font-bold text-[10px]">${p.revisionLevel || 'NA'}</span></td>
+        <td class="px-sm py-sm truncate max-w-[120px]">${p.vendorName || '---'}</td>
+        <td class="px-sm py-sm truncate max-w-[120px]">${p.dealer || '---'}</td>
+        <td class="px-sm py-sm font-mono">${p.afmCode || '---'}</td>
+        <td class="px-sm py-sm whitespace-nowrap">
+          ${isAdmin ? `
+            <div class="flex gap-xs">
+              <button onclick="openPartModal(${JSON.stringify(p).replace(/"/g,'&quot;')})" title="Edit Part Specification" class="p-xs hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-[16px]">edit</span>
+              </button>
+              <button onclick="deletePart('${p.id || p.partNumber}','${p.partNumber}')" title="Delete Part Specification" class="p-xs hover:bg-error-container rounded-lg text-on-surface-variant hover:text-error transition-colors">
+                <span class="material-symbols-outlined text-[16px]">delete</span>
+              </button>
+            </div>
+          ` : `
+            <span class="text-[10px] text-outline italic">Read-only</span>
+          `}
+        </td>
+      </tr>`).join('');
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="10" class="text-error px-md py-md">${err.message}</td></tr>`;
+  }
+}
+
+function openPartModal(part = null) {
+  const user = Auth.getUser();
+  if (!user || user.role !== 'Admin') {
+    showToast('Permission denied: Only Admin users can add or edit part specifications.', 'error');
+    return;
+  }
+
+  editingPartId = part ? (part.id || part.partNumber) : null;
+  document.getElementById('partModalTitle').textContent = part ? 'Edit Part Specification' : 'Add Part Specification';
+  document.getElementById('partForm').reset();
+
+  if (part) {
+    setField('fpClientInput', part.clientName || part.clientId || '');
+    setField('fpPartNumber', part.partNumber || '');
+    setField('fpDescription', part.description || '');
+    setField('fpJtNumber', part.jtNumber || '');
+    setField('fpVendorCode', part.vendorCode || '');
+    setField('fpRevisionLevel', part.revisionLevel || '');
+    setField('fpVendorName', part.vendorName || '');
+    setField('fpDealer', part.dealer || '');
+    setField('fpAfmCode', part.afmCode || '');
+  }
+
+  document.getElementById('partModal').classList.remove('hidden');
+  document.getElementById('partModalOverlay').classList.remove('hidden');
+}
+
+function closePartModal() {
+  document.getElementById('partModal').classList.add('hidden');
+  document.getElementById('partModalOverlay').classList.add('hidden');
+}
+
+async function savePart(e) {
+  e.preventDefault();
+  const user = Auth.getUser();
+  if (!user || user.role !== 'Admin') {
+    showToast('Permission denied: Only Admin users can add part specifications.', 'error');
+    return;
+  }
+
+  const clientName = getField('fpClientInput');
+  const partNumber = getField('fpPartNumber');
+  const description = getField('fpDescription');
+
+  if (!clientName) return showToast('Client Name is required.', 'error');
+  if (!partNumber) return showToast('Part Number is required.', 'error');
+  if (!description) return showToast('Part Description is required.', 'error');
+
+  const payload = {
+    clientName,
+    clientId: clientName,
+    partNumber,
+    description,
+    jtNumber: getField('fpJtNumber'),
+    vendorCode: getField('fpVendorCode'),
+    revisionLevel: getField('fpRevisionLevel'),
+    vendorName: getField('fpVendorName'),
+    dealer: getField('fpDealer'),
+    afmCode: getField('fpAfmCode'),
+  };
+
+  try {
+    if (editingPartId) {
+      await api.updatePart(editingPartId, payload);
+      showToast('Part specification updated in database.', 'success');
+    } else {
+      const res = await api.addPart(payload);
+      showToast(res.message || 'Part specification registered in database.', 'success');
+    }
+    closePartModal();
+    await loadPartsMaster();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+async function deletePart(id, partNumber) {
+  const user = Auth.getUser();
+  if (!user || user.role !== 'Admin') {
+    showToast('Permission denied: Only Admin users can delete part specifications.', 'error');
+    return;
+  }
+
+  if (!confirm(`Are you sure you want to deactivate Part Master "${partNumber}"?`)) return;
+
+  try {
+    await api.deletePart(id);
+    showToast(`Part Master "${partNumber}" deactivated in database.`, 'success');
+    await loadPartsMaster();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+// ============================================================
 // SETTINGS TAB
 // ============================================================
 async function loadSettings() {
@@ -122,6 +290,7 @@ async function loadSettings() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Settings listener
   document.getElementById('settingsForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     try {
@@ -134,12 +303,20 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('Settings saved.', 'success');
     } catch (err) { showToast(err.message, 'error'); }
   });
+
+  // User form listeners
   document.getElementById('addUserBtn')?.addEventListener('click', () => openUserModal());
   document.getElementById('userForm')?.addEventListener('submit', saveUser);
   document.getElementById('cancelUserModal')?.addEventListener('click', closeUserModal);
   document.getElementById('userModalOverlay')?.addEventListener('click', (e) => { if (e.target === e.currentTarget) closeUserModal(); });
+
+  // Part form listeners
+  document.getElementById('partForm')?.addEventListener('submit', savePart);
+  document.getElementById('cancelPartModal')?.addEventListener('click', closePartModal);
+  document.getElementById('partModalOverlay')?.addEventListener('click', (e) => { if (e.target === e.currentTarget) closePartModal(); });
 });
 
+// Helper functions
 function setElement(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
 function setField(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
 function getField(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }

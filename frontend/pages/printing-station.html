@@ -21,11 +21,6 @@
   body { font-family:'Open Sans',sans-serif; background-color:#fbf9f8; color:#1b1c1c; }
   .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
   .glass-panel { background:rgba(255,255,255,0.7); backdrop-filter:blur(8px); border:1px solid rgba(226,232,240,0.8); }
-  .floating-label-group { position:relative; }
-  .floating-label-group input:focus ~ label,
-  .floating-label-group input:not(:placeholder-shown) ~ label,
-  .floating-label-group select:focus ~ label { top:-8px; left:12px; font-size:12px; background:white; padding:0 4px; color:#142a7d; }
-  .floating-label-group label { position:absolute; top:14px; left:16px; transition:all 0.2s ease; pointer-events:none; color:#757683; }
   .bento-grid { display:grid; grid-template-columns:repeat(12,1fr); gap:24px; }
   .sidebar-active-tab { background:rgba(255,255,255,0.1); border-left:4px solid #bb0013; font-weight:700; }
   select option { color: #1b1c1c; }
@@ -115,11 +110,11 @@
             </h3>
           </div>
           <div class="grid grid-cols-1 gap-sm pt-sm">
-            <div class="floating-label-group">
-              <select class="w-full h-12 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md bg-white px-4" id="printerSelect">
-                <option value="">Loading printers...</option>
+            <div>
+              <label for="printerSelect" class="block text-xs font-bold text-primary uppercase mb-1">Select Printer</label>
+              <select class="w-full h-11 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md bg-white px-3 font-medium text-on-surface" id="printerSelect">
+                <option value="">-- Select Printer --</option>
               </select>
-              <label class="font-label-md">Select Printer</label>
             </div>
             <div class="grid grid-cols-3 gap-sm">
               <div class="bg-surface-container-low rounded-lg p-sm text-center">
@@ -147,18 +142,18 @@
           </div>
           <div class="space-y-sm pt-sm">
             <!-- Step 1: Client -->
-            <div class="floating-label-group">
-              <select class="w-full h-12 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md bg-white px-4" id="clientSelect">
-                <option value="">Loading clients...</option>
+            <div>
+              <label for="clientSelect" class="block text-xs font-bold text-primary uppercase mb-1">Step 1: Select Client</label>
+              <select class="w-full h-11 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md bg-white px-3 font-medium text-on-surface" id="clientSelect">
+                <option value="">-- Select Client --</option>
               </select>
-              <label class="font-label-md">Step 1: Select Client</label>
             </div>
             <!-- Step 2: Part Number -->
-            <div class="floating-label-group">
-              <select class="w-full h-12 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md bg-white px-4" id="partSelect">
+            <div>
+              <label for="partSelect" class="block text-xs font-bold text-primary uppercase mb-1">Step 2: Select Part Number</label>
+              <select class="w-full h-11 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md bg-white px-3 font-medium text-on-surface" id="partSelect">
                 <option value="">-- First select a client --</option>
               </select>
-              <label class="font-label-md">Step 2: Select Part Number</label>
             </div>
           </div>
         </section>
@@ -216,7 +211,10 @@
               </div>
             </div>
           </div>
-          <p class="mt-md text-xs text-outline italic">Label: 1000mm × 250mm | QR encodes the composite code. Actual print may vary by printer calibration.</p>
+          <div class="mt-md w-full max-w-xs text-center">
+            <label for="quantity" class="block text-xs font-bold text-primary uppercase mb-1">Step 6: Quantity *</label>
+            <input class="w-full h-11 text-center rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md font-bold bg-white px-4 text-primary" id="quantity" min="1" max="9999" type="number" value="1"/>
+          </div>
           </div>
         </section>
 
@@ -227,39 +225,39 @@
               <span class="material-symbols-outlined text-white">edit_note</span>
               Sticker Specification Details
             </h3>
-            <span class="text-white/80 font-label-md">Step 3-6: Enter Details</span>
+            <span class="text-white/80 font-label-md">Step 3-5: Enter Details</span>
           </div>
           <div class="p-md">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
 
               <!-- Auto-populated fields (READ ONLY) -->
-              <div class="floating-label-group md:col-span-2">
-                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="partDescription" placeholder=" " readonly type="text"/>
-                <label class="font-label-md">Part Description (Auto)</label>
+              <div class="md:col-span-2">
+                <label for="partDescription" class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Part Description (Auto)</label>
+                <input class="w-full h-11 rounded-lg border border-outline-variant text-body-md readonly-field px-3" id="partDescription" readonly type="text"/>
               </div>
-              <div class="floating-label-group">
-                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="jtNumber" placeholder=" " readonly type="text"/>
-                <label class="font-label-md">JT Number (Auto)</label>
+              <div>
+                <label for="jtNumber" class="block text-xs font-bold text-on-surface-variant uppercase mb-1">JT Number (Auto)</label>
+                <input class="w-full h-11 rounded-lg border border-outline-variant text-body-md readonly-field px-3" id="jtNumber" readonly type="text"/>
               </div>
-              <div class="floating-label-group">
-                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="vendorCode" placeholder=" " readonly type="text"/>
-                <label class="font-label-md">Vendor Code (Auto)</label>
+              <div>
+                <label for="vendorCode" class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Vendor Code (Auto)</label>
+                <input class="w-full h-11 rounded-lg border border-outline-variant text-body-md readonly-field px-3" id="vendorCode" readonly type="text"/>
               </div>
-              <div class="floating-label-group">
-                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="revisionLevel" placeholder=" " readonly type="text"/>
-                <label class="font-label-md">Revision Level (Auto)</label>
+              <div>
+                <label for="revisionLevel" class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Revision Level (Auto)</label>
+                <input class="w-full h-11 rounded-lg border border-outline-variant text-body-md readonly-field px-3" id="revisionLevel" readonly type="text"/>
               </div>
-              <div class="floating-label-group">
-                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="vendorName" placeholder=" " readonly type="text"/>
-                <label class="font-label-md">Vendor Name (Auto)</label>
+              <div>
+                <label for="vendorName" class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Vendor Name (Auto)</label>
+                <input class="w-full h-11 rounded-lg border border-outline-variant text-body-md readonly-field px-3" id="vendorName" readonly type="text"/>
               </div>
-              <div class="floating-label-group">
-                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="dealer" placeholder=" " readonly type="text"/>
-                <label class="font-label-md">Dealer (Auto)</label>
+              <div>
+                <label for="dealer" class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Dealer (Auto)</label>
+                <input class="w-full h-11 rounded-lg border border-outline-variant text-body-md readonly-field px-3" id="dealer" readonly type="text"/>
               </div>
-              <div class="floating-label-group">
-                <input class="w-full h-12 rounded-lg border border-outline-variant text-body-md readonly-field" id="afmCode" placeholder=" " readonly type="text"/>
-                <label class="font-label-md">AFM Code (Auto)</label>
+              <div>
+                <label for="afmCode" class="block text-xs font-bold text-on-surface-variant uppercase mb-1">AFM Code (Auto)</label>
+                <input class="w-full h-11 rounded-lg border border-outline-variant text-body-md readonly-field px-3" id="afmCode" readonly type="text"/>
               </div>
 
               <!-- Divider -->
@@ -268,8 +266,9 @@
               </div>
 
               <!-- Step 4: Serial Number (AUTO-GENERATED) -->
-              <div class="floating-label-group relative">
-                <div class="w-full h-12 rounded-lg border-2 border-primary/30 bg-primary/5 px-sm flex items-center justify-between">
+              <div>
+                <label class="block text-xs font-bold text-primary uppercase mb-1">Step 4: Serial Number (Auto-Generated)</label>
+                <div class="w-full h-11 rounded-lg border-2 border-primary/30 bg-primary/5 px-sm flex items-center justify-between">
                   <div class="flex items-center gap-xs">
                     <span class="material-symbols-outlined text-primary text-[16px]">tag</span>
                     <span class="font-mono font-black text-primary text-[17px] tracking-widest" id="serialNumberDisplay">------</span>
@@ -282,27 +281,20 @@
                     </button>
                   </div>
                 </div>
-                <label class="absolute -top-2 left-3 text-[10px] font-bold bg-white px-1 text-primary uppercase">Serial Number (Auto-Generated)</label>
                 <!-- Hidden input carries the value for form submission -->
                 <input type="hidden" id="serialNumber" />
               </div>
 
               <!-- Step 5: Manufacturing Date (defaults to today) -->
-              <div class="floating-label-group relative">
+              <div>
+                <label for="mfgDate" class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Step 5: Mfg Date (Auto: Today)</label>
                 <div class="flex gap-xs">
-                  <input class="flex-1 h-12 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md px-sm" id="mfgDate" type="date"/>
+                  <input class="flex-1 h-11 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md px-sm" id="mfgDate" type="date"/>
                   <button type="button" id="todayBtn" title="Set to today"
-                    class="h-12 px-sm bg-surface-container-low border border-outline-variant rounded-lg text-[11px] font-bold text-primary hover:bg-primary hover:text-white transition-all active:scale-95 whitespace-nowrap">
+                    class="h-11 px-sm bg-surface-container-low border border-outline-variant rounded-lg text-[11px] font-bold text-primary hover:bg-primary hover:text-white transition-all active:scale-95 whitespace-nowrap">
                     Today
                   </button>
                 </div>
-                <label class="absolute -top-2 left-3 text-[10px] font-bold bg-white px-1 text-on-surface-variant uppercase">Mfg Date (Auto: Today)</label>
-              </div>
-
-              <!-- Step 6: Quantity -->
-              <div class="floating-label-group md:col-span-2">
-                <input class="w-full h-12 rounded-lg border border-outline-variant focus:border-primary focus:ring-primary text-body-md font-bold" id="quantity" min="1" max="9999" placeholder=" " type="number" value="1"/>
-                <label class="font-label-md">Step 6: Quantity *</label>
               </div>
             </div>
           </div>
