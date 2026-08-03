@@ -13,28 +13,30 @@ router.get('/summary', authenticate, async (req, res, next) => {
     const { period = 'today' } = req.query;
     let dateFilter;
     if (period === 'today') {
-      dateFilter = `DATE(date_time) = CURRENT_DATE`;
+      dateFilter = `DATE(date_time) = DATE('now')`;
     } else if (period === 'weekly') {
-      dateFilter = `date_time >= NOW() - INTERVAL '7 days'`;
+      dateFilter = `date_time >= DATETIME('now', '-7 days')`;
     } else if (period === 'monthly') {
-      dateFilter = `date_time >= DATE_TRUNC('month', NOW())`;
+      dateFilter = `date_time >= DATE('now', 'start of month')`;
     } else {
-      dateFilter = `DATE(date_time) = CURRENT_DATE`;
+      dateFilter = `DATE(date_time) = DATE('now')`;
     }
 
+    // SQLite-compatible summary using CASE WHEN instead of FILTER (WHERE ...)
     const [summaryResult, statusResult, dailyResult] = await Promise.all([
       db.query(`
         SELECT
-          COUNT(*) FILTER (WHERE ${dateFilter}) as total_prints,
-          COUNT(*) FILTER (WHERE print_status = 'PRINTED' AND ${dateFilter}) as successful_prints,
-          COUNT(*) FILTER (WHERE print_status = 'FAILED' AND ${dateFilter}) as failed_prints,
-          COUNT(*) FILTER (WHERE print_status = 'PENDING' AND ${dateFilter}) as pending_prints,
-          COALESCE(SUM(quantity) FILTER (WHERE print_status = 'PRINTED' AND ${dateFilter}), 0) as total_labels
+          COUNT(*) as total_prints,
+          SUM(CASE WHEN print_status = 'PRINTED' THEN 1 ELSE 0 END) as successful_prints,
+          SUM(CASE WHEN print_status = 'FAILED' THEN 1 ELSE 0 END) as failed_prints,
+          SUM(CASE WHEN print_status = 'PENDING' THEN 1 ELSE 0 END) as pending_prints,
+          COALESCE(SUM(CASE WHEN print_status = 'PRINTED' THEN quantity ELSE 0 END), 0) as total_labels
         FROM print_logs
+        WHERE ${dateFilter}
       `),
       db.query(`
         SELECT
-          COUNT(*) FILTER (WHERE is_active = TRUE) as active_printers,
+          SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active_printers,
           COUNT(*) as total_printers
         FROM printer_settings
       `),
@@ -44,7 +46,7 @@ router.get('/summary', authenticate, async (req, res, next) => {
           COUNT(*) as count,
           SUM(quantity) as labels
         FROM print_logs
-        WHERE date_time >= NOW() - INTERVAL '30 days'
+        WHERE date_time >= DATETIME('now', '-30 days')
         GROUP BY DATE(date_time)
         ORDER BY date ASC
       `),
@@ -74,7 +76,7 @@ router.get('/client-wise', authenticate, async (req, res, next) => {
     let p = 1;
 
     if (dateFrom) { conditions.push(`date_time >= $${p++}`); params.push(dateFrom); }
-    if (dateTo)   { conditions.push(`date_time <= $${p++}::date + interval '1 day'`); params.push(dateTo); }
+    if (dateTo)   { conditions.push(`DATE(date_time) <= $${p++}`); params.push(dateTo); }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
 
@@ -83,9 +85,9 @@ router.get('/client-wise', authenticate, async (req, res, next) => {
         client_name,
         COUNT(*) as job_count,
         SUM(quantity) as label_count,
-        COUNT(*) FILTER (WHERE print_status = 'PRINTED') as success_count,
-        COUNT(*) FILTER (WHERE print_status = 'FAILED') as fail_count,
-        ROUND(COUNT(*) FILTER (WHERE print_status = 'PRINTED') * 100.0 / NULLIF(COUNT(*), 0), 1) as success_rate
+        SUM(CASE WHEN print_status = 'PRINTED' THEN 1 ELSE 0 END) as success_count,
+        SUM(CASE WHEN print_status = 'FAILED' THEN 1 ELSE 0 END) as fail_count,
+        ROUND(SUM(CASE WHEN print_status = 'PRINTED' THEN 1.0 ELSE 0 END) * 100.0 / NULLIF(COUNT(*), 0), 1) as success_rate
       FROM print_logs
       ${where}
       GROUP BY client_name
@@ -108,8 +110,8 @@ router.get('/printer-wise', authenticate, async (req, res, next) => {
         pl.printer_name,
         COUNT(*) as job_count,
         SUM(pl.quantity) as label_count,
-        COUNT(*) FILTER (WHERE pl.print_status = 'PRINTED') as success_count,
-        COUNT(*) FILTER (WHERE pl.print_status = 'FAILED') as fail_count,
+        SUM(CASE WHEN pl.print_status = 'PRINTED' THEN 1 ELSE 0 END) as success_count,
+        SUM(CASE WHEN pl.print_status = 'FAILED' THEN 1 ELSE 0 END) as fail_count,
         ps.is_active as printer_active
       FROM print_logs pl
       LEFT JOIN printer_settings ps ON pl.printer_used = ps.id
@@ -133,8 +135,8 @@ router.get('/operator-wise', authenticate, async (req, res, next) => {
         u.role,
         COUNT(*) as job_count,
         SUM(pl.quantity) as label_count,
-        COUNT(*) FILTER (WHERE pl.print_status = 'PRINTED') as success_count,
-        COUNT(*) FILTER (WHERE pl.print_status = 'FAILED') as fail_count
+        SUM(CASE WHEN pl.print_status = 'PRINTED' THEN 1 ELSE 0 END) as success_count,
+        SUM(CASE WHEN pl.print_status = 'FAILED' THEN 1 ELSE 0 END) as fail_count
       FROM print_logs pl
       LEFT JOIN users u ON pl.printed_by = u.id
       GROUP BY pl.printed_by_name, u.role
@@ -157,8 +159,8 @@ router.get('/export/csv', authenticate, async (req, res, next) => {
     let p = 1;
 
     if (dateFrom) { conditions.push(`pl.date_time >= $${p++}`); params.push(dateFrom); }
-    if (dateTo)   { conditions.push(`pl.date_time <= $${p++}::date + interval '1 day'`); params.push(dateTo); }
-    if (clientName) { conditions.push(`pl.client_name ILIKE $${p++}`); params.push(`%${clientName}%`); }
+    if (dateTo)   { conditions.push(`DATE(pl.date_time) <= $${p++}`); params.push(dateTo); }
+    if (clientName) { conditions.push(`pl.client_name LIKE $${p++}`); params.push(`%${clientName}%`); }
     if (status) { conditions.push(`pl.print_status = $${p++}`); params.push(status.toUpperCase()); }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -208,8 +210,8 @@ router.get('/export/pdf', authenticate, async (req, res, next) => {
     let p = 1;
 
     if (dateFrom) { conditions.push(`pl.date_time >= $${p++}`); params.push(dateFrom); }
-    if (dateTo)   { conditions.push(`pl.date_time <= $${p++}::date + interval '1 day'`); params.push(dateTo); }
-    if (clientName) { conditions.push(`pl.client_name ILIKE $${p++}`); params.push(`%${clientName}%`); }
+    if (dateTo)   { conditions.push(`DATE(pl.date_time) <= $${p++}`); params.push(dateTo); }
+    if (clientName) { conditions.push(`pl.client_name LIKE $${p++}`); params.push(`%${clientName}%`); }
     if (status) { conditions.push(`pl.print_status = $${p++}`); params.push(status.toUpperCase()); }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -224,8 +226,8 @@ router.get('/export/pdf', authenticate, async (req, res, next) => {
       db.query(`
         SELECT
           COUNT(*) as total,
-          COUNT(*) FILTER (WHERE print_status = 'PRINTED') as success,
-          COUNT(*) FILTER (WHERE print_status = 'FAILED') as failed
+          SUM(CASE WHEN print_status = 'PRINTED' THEN 1 ELSE 0 END) as success,
+          SUM(CASE WHEN print_status = 'FAILED' THEN 1 ELSE 0 END) as failed
         FROM print_logs pl ${where}
       `, params),
     ]);

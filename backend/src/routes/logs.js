@@ -41,18 +41,18 @@ router.get('/', authenticate, async (req, res, next) => {
       params.push(dateFrom);
     }
     if (dateTo) {
-      conditions.push(`pl.date_time <= $${paramIdx++}::date + interval '1 day'`);
+      conditions.push(`DATE(pl.date_time) <= $${paramIdx++}`);
       params.push(dateTo);
     }
     if (search) {
-      conditions.push(`(pl.job_id ILIKE $${paramIdx} OR pl.part_number ILIKE $${paramIdx} OR pl.client_name ILIKE $${paramIdx} OR pl.serial_number ILIKE $${paramIdx})`);
+      conditions.push(`(pl.job_id LIKE $${paramIdx} OR pl.part_number LIKE $${paramIdx} OR pl.client_name LIKE $${paramIdx} OR pl.serial_number LIKE $${paramIdx})`);
       params.push(`%${search}%`);
       paramIdx++;
     }
 
     const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
 
-    const countQuery = `SELECT COUNT(*) FROM print_logs pl ${whereClause}`;
+    const countQuery = `SELECT COUNT(*) as count FROM print_logs pl ${whereClause}`;
     const dataQuery = `
       SELECT pl.*, u.name as operator_name
       FROM print_logs pl
@@ -67,7 +67,7 @@ router.get('/', authenticate, async (req, res, next) => {
       db.query(dataQuery, [...params, parseInt(limit), offset]),
     ]);
 
-    const total = parseInt(countResult.rows[0].count);
+    const total = parseInt(countResult.rows[0]?.count || 0);
     res.json({
       success: true,
       data: dataResult.rows,

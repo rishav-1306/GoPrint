@@ -98,8 +98,7 @@ app.use(errorHandler);
 const start = async () => {
   const dbConnected = await testConnection();
   if (!dbConnected) {
-    console.error('[SERVER] Cannot connect to PostgreSQL. Please check DATABASE_URL in .env');
-    console.error('[SERVER] Run: npm run migrate to set up the database');
+    console.error('[SERVER] Cannot initialize system database.');
     process.exit(1);
   }
 
@@ -110,7 +109,7 @@ const start = async () => {
     console.log(`\n  → App URL:      http://localhost:${config.port}`);
     console.log(`  → API Health:   http://localhost:${config.port}/api/health`);
     console.log(`  → Environment:  ${config.nodeEnv}`);
-    console.log(`  → Mock API:     ${config.useMockExternalApi ? 'YES (using mock client/part data)' : 'NO (live external API)'}`);
+    console.log(`  → Data Engine:  Excel Sheet Database`);
     console.log('\n  Default Credentials:');
     console.log('    Admin    → username: admin      password: Admin@123');
     console.log('    Operator → username: operator   password: Operator@123');

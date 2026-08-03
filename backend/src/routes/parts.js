@@ -2,7 +2,18 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const { authenticate, requireRole } = require('../middleware/auth');
-const externalApi = require('../services/externalApiService');
+const excelService = require('../services/excelService');
+
+// Helper to get Excel URL from settings
+async function getConfiguredExcelUrl() {
+  try {
+    const settingsRes = await db.query('SELECT excel_url FROM application_settings WHERE id = 1');
+    const url = settingsRes.rows[0]?.excel_url;
+    return (url && url.trim()) ? url.trim() : null;
+  } catch (err) {
+    return null;
+  }
+}
 
 // GET /api/parts — Fetch parts (by clientId/clientName or all)
 router.get('/', authenticate, async (req, res, next) => {
@@ -10,6 +21,20 @@ router.get('/', authenticate, async (req, res, next) => {
     const { clientId, clientName, all } = req.query;
     const targetClient = clientId || clientName;
 
+    // 1. Check Excel Database URL
+    const excelUrl = await getConfiguredExcelUrl();
+    if (excelUrl) {
+      try {
+        const excelParts = await excelService.getExcelPartsByClient(excelUrl, targetClient || 'all');
+        if (excelParts && excelParts.length > 0) {
+          return res.json({ success: true, data: excelParts, source: 'excel' });
+        }
+      } catch (excelErr) {
+        console.warn('[PARTS] Error reading Excel sheet database:', excelErr.message);
+      }
+    }
+
+    // 2. Local Database
     let sql = `SELECT id, client_id, client_name, part_number, description, jt_number, vendor_code, revision_level, vendor_name, dealer, afm_code, client_address, created_at 
                FROM parts WHERE is_active = 1`;
     const params = [];
@@ -40,11 +65,6 @@ router.get('/', authenticate, async (req, res, next) => {
       return res.json({ success: true, data: mapped });
     }
 
-    // Fallback to mock API if DB is empty
-    if (targetClient) {
-      const parts = await externalApi.getPartsByClient(targetClient);
-      return res.json({ success: true, data: parts });
-    }
     res.json({ success: true, data: [] });
   } catch (err) {
     next(err);
@@ -55,6 +75,21 @@ router.get('/', authenticate, async (req, res, next) => {
 router.get('/:partId', authenticate, async (req, res, next) => {
   try {
     const { partId } = req.params;
+
+    // 1. Check Excel Database URL
+    const excelUrl = await getConfiguredExcelUrl();
+    if (excelUrl) {
+      try {
+        const excelPart = await excelService.getExcelPartDetails(excelUrl, partId);
+        if (excelPart) {
+          return res.json({ success: true, data: excelPart, source: 'excel' });
+        }
+      } catch (excelErr) {
+        console.warn('[PARTS] Error fetching part details from Excel sheet:', excelErr.message);
+      }
+    }
+
+    // 2. Local Database
     const result = await db.query(
       `SELECT id, client_id, client_name, part_number, description, jt_number, vendor_code, revision_level, vendor_name, dealer, afm_code, client_address 
        FROM parts WHERE (id = $1 OR part_number = $1) AND is_active = 1 LIMIT 1`,
@@ -82,12 +117,8 @@ router.get('/:partId', authenticate, async (req, res, next) => {
       });
     }
 
-    // Fallback to mock
-    const part = await externalApi.getPartDetails(partId);
-    if (!part) {
-      return res.status(404).json({ success: false, message: 'Part Master not found.' });
-    }
-    res.json({ success: true, data: part });
+    // Fallback if not found
+    return res.status(404).json({ success: false, message: 'Part Master specification not found.' });
   } catch (err) {
     next(err);
   }

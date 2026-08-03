@@ -129,6 +129,7 @@ const initSqlite = async () => {
             theme_name TEXT DEFAULT 'light',
             default_printer_id INTEGER REFERENCES printer_settings(id),
             external_api_url TEXT,
+            excel_url TEXT,
             timezone TEXT DEFAULT 'Asia/Kolkata',
             date_format TEXT DEFAULT 'DD-MMM-YYYY',
             shift_start_time TEXT DEFAULT '08:00:00',
@@ -136,6 +137,11 @@ const initSqlite = async () => {
             last_updated DATETIME DEFAULT CURRENT_TIMESTAMP
           );
         `);
+
+        // Migration: Ensure excel_url exists on existing SQLite databases
+        db.run(`ALTER TABLE application_settings ADD COLUMN excel_url TEXT`, (err) => {
+          // Ignore error if column already exists
+        });
 
         db.run(`
           CREATE TABLE IF NOT EXISTS clients (
@@ -235,30 +241,39 @@ const initSqlite = async () => {
 const convertPostgresToSqlite = (sql) => {
   let s = sql;
 
-  // Replace Postgres $1, $2 with ? or keep $1 ($1 works in sqlite3 if params is an array or object, but ? is safest)
-  // sqlite3 supports $1, $2 natively when params are passed as an array or object in sqlite3!
-  // Replace ILIKE with LIKE
+  // Replace ILIKE with LIKE (case-insensitive)
   s = s.replace(/\bILIKE\b/gi, 'LIKE');
 
-  // Replace NOW() with CURRENT_TIMESTAMP or DATETIME('now')
+  // Replace NOW() with DATETIME('now')
   s = s.replace(/\bNOW\(\)/gi, "DATETIME('now')");
 
   // Replace CURRENT_DATE with DATE('now')
   s = s.replace(/\bCURRENT_DATE\b/gi, "DATE('now')");
 
-  // Replace Postgres date intervals
-  s = s.replace(/NOW\(\)\s*-\s*INTERVAL\s*'7 days'/gi, "DATETIME('now', '-7 days')");
-  s = s.replace(/NOW\(\)\s*-\s*INTERVAL\s*'30 days'/gi, "DATETIME('now', '-30 days')");
-  s = s.replace(/DATE_TRUNC\('month',\s*NOW\(\)\)/gi, "DATE('now', 'start of month')");
-  s = s.replace(/::date\s*\+\s*interval\s*'1 day'/gi, "");
+  // Replace Postgres date intervals — various formats
+  s = s.replace(/DATETIME\('now'\)\s*-\s*INTERVAL\s*'(\d+)\s*days?'/gi, (_, d) => `DATETIME('now', '-${d} days')`);
+  s = s.replace(/NOW\(\)\s*-\s*INTERVAL\s*'(\d+)\s*days?'/gi, (_, d) => `DATETIME('now', '-${d} days')`);
+  s = s.replace(/DATE_TRUNC\('month',\s*(?:NOW\(\)|DATETIME\('now'\))\)/gi, "DATE('now', 'start of month')");
+  s = s.replace(/::date\s*\+\s*interval\s*'1 day'/gi, '');
+  s = s.replace(/\s*::\w+/g, ''); // strip any remaining Postgres type casts
+
+  // INTERVAL standalone
+  s = s.replace(/INTERVAL\s*'7 days'/gi, "'-7 days'");
+  s = s.replace(/INTERVAL\s*'30 days'/gi, "'-30 days'");
+  s = s.replace(/INTERVAL\s*'1 day'/gi, "'+1 day'");
 
   // Replace boolean TRUE/FALSE with 1/0
-  s = s.replace(/=\s*TRUE\b/gi, '= 1');
-  s = s.replace(/=\s*FALSE\b/gi, '= 0');
-  s = s.replace(/\bis_active\s*=\s*TRUE\b/gi, 'is_active = 1');
-  s = s.replace(/\bis_active\s*=\s*FALSE\b/gi, 'is_active = 0');
-  s = s.replace(/\bis_default\s*=\s*TRUE\b/gi, 'is_default = 1');
-  s = s.replace(/\bis_default\s*=\s*FALSE\b/gi, 'is_default = 0');
+  s = s.replace(/\bTRUE\b/gi, '1');
+  s = s.replace(/\bFALSE\b/gi, '0');
+
+  // Replace RETURNING * (not directly supported in INSERT — strip it and handle in sqliteQuery)
+  // Note: sqliteQuery handles this by fetching the last inserted row
+
+  // Replace Postgres WITH TIMEZONE in timestamps
+  s = s.replace(/\bTIMESTAMP WITH TIME ZONE\b/gi, 'DATETIME');
+
+  // ON CONFLICT ... DO UPDATE SET — SQLite uses same syntax, no change needed
+  // ON CONFLICT (id) DO UPDATE SET — keep as-is
 
   return s;
 };

@@ -8,10 +8,6 @@ echo.
 if not exist "backend\.env" (
     echo [SETUP] .env file not found. Creating from template...
     copy "backend\.env.example" "backend\.env" >nul
-    echo [SETUP] Please edit backend\.env and set your DATABASE_URL and JWT_SECRET
-    echo [SETUP] Then run this script again.
-    pause
-    exit /b 1
 )
 
 :: Check if node_modules exists

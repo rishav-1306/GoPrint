@@ -2,21 +2,31 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const { authenticate, requireRole } = require('../middleware/auth');
-const externalApi = require('../services/externalApiService');
+const excelService = require('../services/excelService');
 
 // GET /api/clients — Fetch all active clients
 router.get('/', authenticate, async (req, res, next) => {
   try {
+    // 1. Check if Excel URL is configured in settings
+    const settingsRes = await db.query('SELECT excel_url FROM application_settings WHERE id = 1');
+    const excelUrl = settingsRes.rows[0]?.excel_url;
+    if (excelUrl && excelUrl.trim()) {
+      try {
+        const excelClients = await excelService.getExcelClients(excelUrl);
+        if (excelClients && excelClients.length > 0) {
+          return res.json({ success: true, data: excelClients, source: 'excel' });
+        }
+      } catch (excelErr) {
+        console.warn('[CLIENTS] Error reading Excel sheet database:', excelErr.message);
+      }
+    }
+
+    // 2. Fetch from local database
     const result = await db.query(
       `SELECT id, name, address, code, contact_person, contact_phone, contact_email, created_at 
        FROM clients WHERE is_active = 1 ORDER BY name ASC`
     );
-    if (result.rows && result.rows.length > 0) {
-      return res.json({ success: true, data: result.rows });
-    }
-    // Fallback to mock external API if table is empty
-    const mockClients = await externalApi.getClients();
-    res.json({ success: true, data: mockClients });
+    return res.json({ success: true, data: result.rows || [] });
   } catch (err) {
     next(err);
   }

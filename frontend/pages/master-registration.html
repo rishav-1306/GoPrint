@@ -134,9 +134,11 @@
             <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="sCompanyName" type="text"/>
           </div>
           <div>
-            <label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">External SQL API URL</label>
-            <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md font-mono" id="sExternalApi" placeholder="http://your-sql-server/api" type="url"/>
-            <p class="text-xs text-on-surface-variant mt-xs">URL of your existing SQL database API for client/part data</p>
+            <label class="block text-xs font-bold text-primary uppercase mb-xs flex items-center gap-1 font-bold">
+              <span class="material-symbols-outlined text-base">table_chart</span> Excel Sheet Database Link / File URL
+            </label>
+            <input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md font-mono" id="sExcelUrl" placeholder="https://docs.google.com/spreadsheets/d/... or https://domain.com/parts.xlsx" type="text"/>
+            <p class="text-xs text-on-surface-variant mt-xs">Paste your Google Sheets link, direct .xlsx/.csv link, or local Excel file path. The Excel sheet will act as the master database for clients, parts, and printing station details.</p>
           </div>
           <div class="grid grid-cols-2 gap-md">
             <div>

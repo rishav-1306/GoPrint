@@ -283,7 +283,7 @@ async function loadSettings() {
     const { data } = await api.getSettings();
     if (!data) return;
     setField('sCompanyName', data.company_name || '');
-    setField('sExternalApi', data.external_api_url || '');
+    setField('sExcelUrl', data.excel_url || '');
     setField('sTimezone', data.timezone || 'Asia/Kolkata');
     setField('sDateFormat', data.date_format || 'DD-MMM-YYYY');
   } catch (err) { showToast('Failed to load settings: ' + err.message, 'error'); }
@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       await api.updateSettings({
         company_name: getField('sCompanyName'),
-        external_api_url: getField('sExternalApi'),
+        excel_url: getField('sExcelUrl'),
         timezone: getField('sTimezone'),
         date_format: getField('sDateFormat'),
       });
