@@ -4,14 +4,29 @@ const db = require('../config/db');
 const { authenticate, requireRole } = require('../middleware/auth');
 const excelService = require('../services/excelService');
 
-// Helper to get Excel URL from settings
+// Helper to get Excel URL from settings (portable across PCs & drives)
 async function getConfiguredExcelUrl() {
+  const fs = require('fs');
+  const path = require('path');
+  const defaultPath = path.join(__dirname, '../../data/Customer Details - Copy.xlsx');
+
   try {
     const settingsRes = await db.query('SELECT excel_url FROM application_settings WHERE id = 1');
-    const url = settingsRes.rows[0]?.excel_url;
-    return (url && url.trim()) ? url.trim() : null;
+    let url = settingsRes.rows[0]?.excel_url;
+    if (url && url.trim()) {
+      // Strip any wrapping quotes (common DB storage issue)
+      url = url.trim().replace(/^["']+|["']+$/g, '').trim();
+      // If local file path, verify existence on this machine; fallback if missing
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        if (!fs.existsSync(url) && fs.existsSync(defaultPath)) {
+          return defaultPath;
+        }
+      }
+      return url;
+    }
+    return fs.existsSync(defaultPath) ? defaultPath : null;
   } catch (err) {
-    return null;
+    return fs.existsSync(defaultPath) ? defaultPath : null;
   }
 }
 

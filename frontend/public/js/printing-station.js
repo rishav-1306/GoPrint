@@ -368,7 +368,7 @@ async function updateStickerPreview() {
 
   // Update description and JT label
   setElement('previewDescription', description);
-  const jtLabel = jtNumber ? `JT ${jtNumber}` : '';
+  const jtLabel = jtNumber ? (jtNumber.toUpperCase().startsWith('JT') ? jtNumber : `JT ${jtNumber}`) : '';
   setElement('previewJtLabel', jtLabel);
 
   // Generate QR code preview (encodes the 32-digit code)

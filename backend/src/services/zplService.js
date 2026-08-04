@@ -137,18 +137,17 @@ const generateZPL = ({
   quantity = 1,
   darkness = 25,
   speed = 6,
-  labelWidthMm = 1000,
-  labelHeightMm = 250,
+  labelWidthMm = 100,
+  labelHeightMm = 25,
   qrData,
 }) => {
-  // ---- Dimension Calculations ----
-  // Force to specified dimensions regardless of passed values
-  const WIDTH_MM  = 1000;
-  const HEIGHT_MM = 250;
+  // ---- Dimension Calculations (100mm × 25mm at 203 DPI = 800 × 200 dots) ----
+  const WIDTH_MM  = 100;
+  const HEIGHT_MM = 25;
   const DPI = 8; // dots per mm at 203 DPI
 
-  const labelWidthDots  = WIDTH_MM  * DPI; // 8000 dots
-  const labelHeightDots = HEIGHT_MM * DPI; // 2000 dots
+  const labelWidthDots  = WIDTH_MM  * DPI; // 800 dots
+  const labelHeightDots = HEIGHT_MM * DPI; // 200 dots
 
   // ---- Build 32-digit code ----
   const code32 = build32DigitCode({ partNumber, revisionLevel, vendorCode, mfgDate, serialNumber, clientName });
@@ -157,25 +156,25 @@ const generateZPL = ({
   const qrContent = qrData || code32;
 
   // ---- Layout constants ----
-  const MARGIN        = 40;   // outer margin in dots
-  const QR_SIZE       = 1800; // QR code zone height/width (nearly full height, right side)
-  const QR_MODULE     = 10;   // QR module size — makes it large and scannable
-  const QR_X         = labelWidthDots - QR_SIZE - MARGIN; // QR left edge
-  const TEXT_AREA_W   = QR_X - MARGIN * 2;               // text area width
+  const MARGIN        = 12;   // outer margin in dots
+  const QR_MODULE     = 4;    // QR module size (module = 4 dots -> ~140 dots total size)
+  const QR_X          = 640;  // QR left edge (x=640 to 780)
+  const TEXT_AREA_W   = QR_X - MARGIN * 2; // 616 dots text width
 
-  // Font sizes — monospace-style for the variable-length composite code
-  // ^A0 = built-in scalable font (closest to monospace)
-  const CODE_FONT_H   = 220; // font height for composite code (size 20 equivalent)
-  const CODE_FONT_W   = 190;
-  const DESC_FONT_H   = 180; // font height for description line (size 18 equivalent)
-  const DESC_FONT_W   = 160;
+  // Font sizes (at 203 DPI, 100x25mm label) - scaled to match 80% resolution proportions
+  const CODE_FONT_H   = 28;   // font height for composite code
+  const CODE_FONT_W   = 18;   // font width for composite code
+  const DESC_FONT_H   = 24;   // font height for description line
+  const DESC_FONT_W   = 16;   // font width for description line
 
   // Vertical positions
-  const CODE_Y        = 250;  // Y for composite code line
-  const DESC_Y        = 1050; // Y for description/JT line
+  const CODE_Y        = 20;   // Y for composite code line
+  const DESC_Y        = 82;   // Y for description line
+  const JT_Y          = 138;  // Y for JT line
 
-  // JT label separator — space between description and JT
-  const JT_TEXT       = jtNumber ? `JT ${trunc(jtNumber, 20)}` : '';
+  // JT label formatting
+  const formattedJt   = jtNumber ? (jtNumber.toUpperCase().startsWith('JT') ? jtNumber : `JT ${jtNumber}`) : '';
+  const JT_TEXT       = formattedJt ? trunc(formattedJt, 30) : '';
 
   const zpl = [
     '^XA',                                  // Start label
@@ -184,12 +183,11 @@ const generateZPL = ({
     `^CI28`,                                // UTF-8 encoding
     `^MD${darkness}`,                       // Darkness
     `^PR${speed}`,                          // Print speed
-    `^PW${labelWidthDots}`,                // Print width in dots
-    `^LL${labelHeightDots}`,               // Label length in dots
+    `^PW${labelWidthDots}`,                // Print width in dots (800)
+    `^LL${labelHeightDots}`,               // Label length in dots (200)
     `^LH0,0`,                              // Label home (top-left origin)
 
-    // ---- ROW 1: COMPOSITE CODE (extra large, bold) ----
-    // Prints the entire composite code on a single line in bold
+    // ---- ROW 1: COMPOSITE CODE ----
     `^FO${MARGIN},${CODE_Y}`,
     `^A0N,${CODE_FONT_H},${CODE_FONT_W}`,
     `^FB${TEXT_AREA_W},1,,`,
@@ -198,22 +196,19 @@ const generateZPL = ({
     // ---- ROW 2: PART DESCRIPTION ----
     `^FO${MARGIN},${DESC_Y}`,
     `^A0N,${DESC_FONT_H},${DESC_FONT_W}`,
-    `^FB${Math.round(TEXT_AREA_W * 0.65)},1,,`,
-    `^FD${trunc(partDescription || '', 35)}^FS`,
+    `^FB${TEXT_AREA_W},1,,`,
+    `^FD${trunc(partDescription || '', 38)}^FS`,
 
-    // ---- ROW 2: JT NUMBER (right of description, separated by dashes/spaces) ----
+    // ---- ROW 3: JT NUMBER ----
     ...(JT_TEXT ? [
-      `^FO${MARGIN + Math.round(TEXT_AREA_W * 0.66)},${DESC_Y}`,
+      `^FO${MARGIN},${JT_Y}`,
       `^A0N,${DESC_FONT_H},${DESC_FONT_W}`,
       `^FD${JT_TEXT}^FS`,
     ] : []),
 
     // ---- QR CODE (Native ZPL, right side, encodes 32-digit code) ----
-    // ^BQN = QR code native
-    // param 2 = model (2 = Model 2, standard QR with 3 finder patterns/"eyes")
-    // param 3 = magnification factor (module size)
-    `^FO${QR_X},${MARGIN}`,
-    `^BQN,2,${QR_MODULE}`,
+    `^FO${QR_X},15`,
+    `^BQN,2,${QR_MODULE},Q`,
     `^FDQA,${qrContent}^FS`,
 
     // ---- PRINT QUANTITY ----
@@ -226,28 +221,343 @@ const generateZPL = ({
 };
 
 /**
- * Generate a test/calibration ZPL label at 1000x250mm
+ * Generate a test/calibration ZPL label at 100x25mm
  */
-const generateTestZPL = ({ darkness = 25, speed = 6, labelWidthMm = 1000, labelHeightMm = 250 } = {}) => {
-  const DPI = 8;
-  const labelWidthDots  = 1000 * DPI; // Always 1000mm
-  const labelHeightDots = 250  * DPI; // Always 250mm
+const generateTestZPL = ({ darkness = 25, speed = 6, labelWidthMm = 100, labelHeightMm = 25 } = {}) => {
+  const DPI = 8; // 203 DPI (8 dots per mm)
+  const labelWidthDots  = (labelWidthMm || 100) * DPI; // 800 dots
+  const labelHeightDots = (labelHeightMm || 25) * DPI; // 200 dots
   const now = new Date().toLocaleString('en-IN');
+  const sampleCode32 = 'A4004113G10NR2507260000007DAIMLER';
 
   return [
     '^XA',
+    `^CI28`,
     `^MD${darkness}`,
     `^PR${speed}`,
     `^PW${labelWidthDots}`,
     `^LL${labelHeightDots}`,
-    `^FO40,40^GB${labelWidthDots-80},${labelHeightDots-80},4^FS`,
-    `^FO80,100^A0N,160,150^FDRSB TRANSMISSIONS PVT. LTD.^FS`,
-    `^FO80,320^A0N,120,110^FDTEST PRINT — CONNECTION OK^FS`,
-    `^FO80,500^A0N,100,90^FD${now}^FS`,
-    `^FO80,660^A0N,100,90^FDDARKNESS: ${darkness} | SPEED: ${speed} | 1000x250mm^FS`,
+    `^LH0,0`,
+
+    // Row 1: Sample 32-digit code
+    `^FO12,18`,
+    `^A0N,28,18`,
+    `^FB616,1,,`,
+    `^FD${sampleCode32}^FS`,
+
+    // Row 2: Test status & timestamp
+    `^FO12,80`,
+    `^A0N,22,15`,
+    `^FB616,1,,`,
+    `^FDTEST PRINT OK — ${now}^FS`,
+
+    // Row 3: Config info
+    `^FO12,136`,
+    `^A0N,22,15`,
+    `^FD100x25mm | DARK:${darkness} | SPD:${speed}^FS`,
+
+    // QR Code (Right side)
+    `^FO640,15`,
+    `^BQN,2,4,Q`,
+    `^FDQA,${sampleCode32}^FS`,
+
     `^PQ1,0,1,Y`,
     '^XZ',
   ].join('\n');
 };
 
-module.exports = { generateZPL, generateTestZPL, formatDate, formatDateDDMMYYYY, build32DigitCode };
+/**
+ * Generate TSPL/TSPL2 label commands for 100x25mm labels
+ */
+const generateTSPL = ({
+  partNumber,
+  partDescription,
+  clientName,
+  vendorCode,
+  vendorName,
+  revisionLevel,
+  serialNumber,
+  mfgDate,
+  jtNumber,
+  hinNumber,
+  quantity = 1,
+  darkness = 25,
+  speed = 6,
+  qrData,
+}) => {
+  const code32 = build32DigitCode({ partNumber, revisionLevel, vendorCode, mfgDate, serialNumber, clientName });
+  const qrContent = qrData || code32;
+  const formattedJt = jtNumber ? (jtNumber.toUpperCase().startsWith('JT') ? jtNumber : `JT ${jtNumber}`) : '';
+  const jtText = formattedJt ? trunc(formattedJt, 30) : '';
+
+  return [
+    `SIZE 100 mm, 25 mm`,
+    `GAP 2 mm, 0 mm`,
+    `SPEED ${speed}`,
+    `DENSITY ${darkness}`,
+    `DIRECTION 1`,
+    `CLS`,
+    `TEXT 12,20,"3",0,1,1,"${code32.trim()}"`,
+    `TEXT 12,82,"3",0,1,1,"${trunc(partDescription || '', 38)}"`,
+    ...(jtText ? [`TEXT 12,138,"3",0,1,1,"${jtText}"`] : []),
+    `QRCODE 640,15,H,4,A,0,"${qrContent}"`,
+    `PRINT ${quantity},1`,
+  ].join('\n');
+};
+
+/**
+ * Generate test TSPL label
+ */
+const generateTestTSPL = ({ darkness = 25, speed = 6 } = {}) => {
+  const now = new Date().toLocaleString('en-IN');
+  const sampleCode32 = 'A4004113G10NR2507260000007DAIMLER';
+
+  return [
+    `SIZE 100 mm, 25 mm`,
+    `GAP 2 mm, 0 mm`,
+    `SPEED ${speed}`,
+    `DENSITY ${darkness}`,
+    `DIRECTION 1`,
+    `CLS`,
+    `TEXT 12,20,"3",0,1,1,"${sampleCode32}"`,
+    `TEXT 12,82,"2",0,1,1,"TEST PRINT OK — ${now}"`,
+    `TEXT 12,136,"2",0,1,1,"100x25mm | DARK:${darkness} | SPD:${speed}"`,
+    `QRCODE 640,15,H,4,A,0,"${sampleCode32}"`,
+    `PRINT 1,1`,
+  ].join('\n');
+};
+
+/**
+ * Generate EPL II (Eltron / Zebra Desktop) commands for 100x25mm labels
+ */
+const generateEPL = ({
+  partNumber,
+  partDescription,
+  clientName,
+  vendorCode,
+  vendorName,
+  revisionLevel,
+  serialNumber,
+  mfgDate,
+  jtNumber,
+  quantity = 1,
+  darkness = 25,
+  speed = 6,
+  qrData,
+}) => {
+  const code32 = build32DigitCode({ partNumber, revisionLevel, vendorCode, mfgDate, serialNumber, clientName });
+  const qrContent = qrData || code32;
+  const formattedJt = jtNumber ? (jtNumber.toUpperCase().startsWith('JT') ? jtNumber : `JT ${jtNumber}`) : '';
+  const jtText = formattedJt ? trunc(formattedJt, 30) : '';
+
+  return [
+    `N`,
+    `q800`,
+    `Q200,24`,
+    `S${Math.min(speed, 6)}`,
+    `D${Math.min(darkness, 15)}`,
+    `A12,18,0,3,1,1,N,"${code32.trim()}"`,
+    `A12,82,0,2,1,1,N,"${trunc(partDescription || '', 38)}"`,
+    ...(jtText ? [`A12,138,0,2,1,1,N,"${jtText}"`] : []),
+    `b640,15,Q,m4,s5,"${qrContent}"`,
+    `P${quantity}`,
+  ].join('\n');
+};
+
+/**
+ * Generate test EPL II label
+ */
+const generateTestEPL = ({ darkness = 10, speed = 4 } = {}) => {
+  const now = new Date().toLocaleString('en-IN');
+  const sampleCode32 = 'A4004113G10NR2507260000007DAIMLER';
+
+  return [
+    `N`,
+    `q800`,
+    `Q200,24`,
+    `S${Math.min(speed, 6)}`,
+    `D${Math.min(darkness, 15)}`,
+    `A12,18,0,3,1,1,N,"${sampleCode32}"`,
+    `A12,82,0,2,1,1,N,"TEST PRINT OK — ${now}"`,
+    `A12,136,0,2,1,1,N,"100x25mm | DARK:${darkness} | SPD:${speed}"`,
+    `b640,15,Q,m4,s5,"${sampleCode32}"`,
+    `P1`,
+  ].join('\n');
+};
+
+/**
+ * Generate Honeywell Fingerprint / Direct Protocol commands
+ */
+const generateFingerprint = ({
+  partNumber,
+  partDescription,
+  clientName,
+  vendorCode,
+  vendorName,
+  revisionLevel,
+  serialNumber,
+  mfgDate,
+  jtNumber,
+  quantity = 1,
+  qrData,
+}) => {
+  const code32 = build32DigitCode({ partNumber, revisionLevel, vendorCode, mfgDate, serialNumber, clientName });
+  const qrContent = qrData || code32;
+  const formattedJt = jtNumber ? (jtNumber.toUpperCase().startsWith('JT') ? jtNumber : `JT ${jtNumber}`) : '';
+  const jtText = formattedJt ? trunc(formattedJt, 30) : '';
+
+  return [
+    `CLL`,
+    `PAGE SIZE 100,25`,
+    `PRPOS 12,18`,
+    `FONT "Swiss 721 BT Bold",12`,
+    `PRTXT "${code32.trim()}"`,
+    `PRPOS 12,82`,
+    `FONT "Swiss 721 BT",10`,
+    `PRTXT "${trunc(partDescription || '', 38)}"`,
+    ...(jtText ? [`PRPOS 12,138`, `PRTXT "${jtText}"`] : []),
+    `PRPOS 640,15`,
+    `BARSET "QRCODE",4,1,2,2`,
+    `PRBAR "${qrContent}"`,
+    `PRINT ${quantity}`,
+  ].join('\n');
+};
+
+/**
+ * Generate test Honeywell Fingerprint label
+ */
+const generateTestFingerprint = () => {
+  const now = new Date().toLocaleString('en-IN');
+  const sampleCode32 = 'A4004113G10NR2507260000007DAIMLER';
+
+  return [
+    `CLL`,
+    `PAGE SIZE 100,25`,
+    `PRPOS 12,18`,
+    `FONT "Swiss 721 BT Bold",12`,
+    `PRTXT "${sampleCode32}"`,
+    `PRPOS 12,82`,
+    `FONT "Swiss 721 BT",10`,
+    `PRTXT "TEST PRINT OK — ${now}"`,
+    `PRPOS 640,15`,
+    `BARSET "QRCODE",4,1,2,2`,
+    `PRBAR "${sampleCode32}"`,
+    `PRINT 1`,
+  ].join('\n');
+};
+
+/**
+ * Generate Intermec IPL commands
+ */
+const generateIPL = ({
+  partNumber,
+  partDescription,
+  clientName,
+  vendorCode,
+  revisionLevel,
+  serialNumber,
+  mfgDate,
+  jtNumber,
+  quantity = 1,
+  qrData,
+}) => {
+  const code32 = build32DigitCode({ partNumber, revisionLevel, vendorCode, mfgDate, serialNumber, clientName });
+  const qrContent = qrData || code32;
+  const formattedJt = jtNumber ? (jtNumber.toUpperCase().startsWith('JT') ? jtNumber : `JT ${jtNumber}`) : '';
+  const jtText = formattedJt ? trunc(formattedJt, 30) : '';
+
+  return [
+    `<STX><ESC>C<ETX>`,
+    `<STX><ESC>P<ETX>`,
+    `<STX>E4;Y25;C1;<ETX>`,
+    `<STX>H0;W800;L200;<ETX>`,
+    `<STX>B0;X12;Y18;C0;D0;H28;W18;F0;"${code32.trim()}";<ETX>`,
+    `<STX>B1;X12;Y80;C0;D0;H22;W15;F0;"${trunc(partDescription || '', 38)}";<ETX>`,
+    ...(jtText ? [`<STX>B2;X12;Y138;C0;D0;H22;W15;F0;"${jtText}";<ETX>`] : []),
+    `<STX>B3;X640;Y15;C28;D0;H4;W4;F0;"${qrContent}";<ETX>`,
+    `<STX>R;<ETX>`,
+    `<STX><NUM${quantity}><ETX>`,
+  ].join('\n');
+};
+
+/**
+ * Generate test Intermec IPL label
+ */
+const generateTestIPL = () => {
+  const now = new Date().toLocaleString('en-IN');
+  const sampleCode32 = 'A4004113G10NR2507260000007DAIMLER';
+
+  return [
+    `<STX><ESC>C<ETX>`,
+    `<STX><ESC>P<ETX>`,
+    `<STX>E4;Y25;C1;<ETX>`,
+    `<STX>H0;W800;L200;<ETX>`,
+    `<STX>B0;X12;Y18;C0;D0;H28;W18;F0;"${sampleCode32}";<ETX>`,
+    `<STX>B1;X12;Y80;C0;D0;H22;W15;F0;"TEST PRINT OK — ${now}";<ETX>`,
+    `<STX>B2;X640;Y15;C28;D0;H4;W4;F0;"${sampleCode32}";<ETX>`,
+    `<STX>R;<ETX>`,
+    `<STX><NUM1><ETX>`,
+  ].join('\n');
+};
+
+/**
+ * Unified Multi-Printer Language Router
+ */
+const generateLabelByLanguage = (language = 'ZPL', params = {}) => {
+  const lang = (language || 'ZPL').toUpperCase();
+  switch (lang) {
+    case 'TSPL':
+      return generateTSPL(params);
+    case 'EPL':
+      return generateEPL(params);
+    case 'FINGERPRINT':
+    case 'DIRECT_PROTOCOL':
+    case 'DP':
+      return generateFingerprint(params);
+    case 'IPL':
+      return generateIPL(params);
+    case 'ZPL':
+    default:
+      return generateZPL(params);
+  }
+};
+
+/**
+ * Unified Test Label Router
+ */
+const generateTestLabelByLanguage = (language = 'ZPL', params = {}) => {
+  const lang = (language || 'ZPL').toUpperCase();
+  switch (lang) {
+    case 'TSPL':
+      return generateTestTSPL(params);
+    case 'EPL':
+      return generateTestEPL(params);
+    case 'FINGERPRINT':
+    case 'DIRECT_PROTOCOL':
+    case 'DP':
+      return generateTestFingerprint(params);
+    case 'IPL':
+      return generateTestIPL(params);
+    case 'ZPL':
+    default:
+      return generateTestZPL(params);
+  }
+};
+
+module.exports = {
+  generateZPL,
+  generateTestZPL,
+  generateTSPL,
+  generateTestTSPL,
+  generateEPL,
+  generateTestEPL,
+  generateFingerprint,
+  generateTestFingerprint,
+  generateIPL,
+  generateTestIPL,
+  generateLabelByLanguage,
+  generateTestLabelByLanguage,
+  formatDate,
+  formatDateDDMMYYYY,
+  build32DigitCode,
+};

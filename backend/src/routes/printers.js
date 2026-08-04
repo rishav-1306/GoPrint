@@ -4,7 +4,7 @@ const db = require('../config/db');
 const { authenticate, requireRole } = require('../middleware/auth');
 const { testConnection } = require('../services/printerService');
 const { sendPrintJob } = require('../services/printerService');
-const { generateTestZPL } = require('../services/zplService');
+const { generateTestLabelByLanguage } = require('../services/zplService');
 
 // GET /api/printers
 router.get('/', authenticate, async (req, res, next) => {
@@ -55,7 +55,7 @@ router.post('/', authenticate, requireRole('Admin', 'Supervisor'), async (req, r
       [printer_name, printer_model || null, printer_ip || null,
        printer_port || 9100, connType, usb_port || null,
        print_language || 'ZPL', darkness || 25, speed || 6,
-       label_width || 100, label_height || 150, is_default || false]
+       label_width || 100, label_height || 25, is_default || false]
     );
     res.status(201).json({ success: true, data: result.rows[0], message: 'Printer added successfully.' });
   } catch (err) {
@@ -169,11 +169,11 @@ router.post('/:id/test-print', authenticate, requireRole('Admin', 'Supervisor'),
       return res.status(400).json({ success: false, message: 'Printer IP not configured.' });
     }
 
-    const zpl = generateTestZPL({
+    const printData = generateTestLabelByLanguage(printer.print_language, {
       darkness: printer.darkness,
       speed: printer.speed,
-      labelWidthMm: 1000,
-      labelHeightMm: 250,
+      labelWidthMm: 100,
+      labelHeightMm: 25,
     });
 
     await sendPrintJob({
@@ -182,7 +182,7 @@ router.post('/:id/test-print', authenticate, requireRole('Admin', 'Supervisor'),
       port: printer.printer_port || 9100,
       printerName: printer.printer_name,
       usbPort: printer.usb_port || null,
-      zplData: zpl,
+      zplData: printData,
     });
     res.json({ success: true, message: `Test label sent to ${printer.printer_name}.` });
   } catch (err) {

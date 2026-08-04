@@ -106,7 +106,8 @@ const start = async () => {
     console.log('\n╔══════════════════════════════════════════════════════╗');
     console.log('║  GoPrint Sticker Printing & Packing System — RUNNING ║');
     console.log('╚══════════════════════════════════════════════════════╝');
-    console.log(`\n  → App URL:      http://localhost:${config.port}`);
+    console.log(`\n  → Local URL:    http://localhost:${config.port}`);
+    console.log(`  → Network URL:  http://192.168.166.45:${config.port}`);
     console.log(`  → API Health:   http://localhost:${config.port}/api/health`);
     console.log(`  → Environment:  ${config.nodeEnv}`);
     console.log(`  → Data Engine:  Excel Sheet Database`);

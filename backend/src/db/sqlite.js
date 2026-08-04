@@ -190,7 +190,11 @@ const initSqlite = async () => {
         db.run(`INSERT OR IGNORE INTO sticker_templates (id, template_name, height, width, supports_qr, supports_barcode, description) VALUES (1, 'Standard_OEM_v2.1', 150, 100, 1, 0, 'Standard OEM label for automotive parts with QR code')`);
 
         // Seed application settings
-        db.run(`INSERT OR IGNORE INTO application_settings (id, company_name) VALUES (1, 'RSB Transmissions')`);
+        const excelDefaultPath = path.join(dataDir, 'Customer Details - Copy.xlsx');
+        db.run(`INSERT OR IGNORE INTO application_settings (id, company_name, excel_url) VALUES (1, 'RSB Transmissions', ?)`, [excelDefaultPath]);
+
+        // Fix: Clean up any existing excel_url that has extra wrapping quotes
+        db.run(`UPDATE application_settings SET excel_url = REPLACE(REPLACE(excel_url, '"', ''), '''', '') WHERE id = 1 AND excel_url LIKE '"%"'`);
 
         // Seed default clients if clients table is empty
         const clientCount = await allSql(`SELECT COUNT(*) as count FROM clients`);

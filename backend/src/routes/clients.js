@@ -7,10 +7,26 @@ const excelService = require('../services/excelService');
 // GET /api/clients — Fetch all active clients
 router.get('/', authenticate, async (req, res, next) => {
   try {
+    const fs = require('fs');
+    const path = require('path');
+    const defaultPath = path.join(__dirname, '../../data/Customer Details - Copy.xlsx');
+
     // 1. Check if Excel URL is configured in settings
     const settingsRes = await db.query('SELECT excel_url FROM application_settings WHERE id = 1');
-    const excelUrl = settingsRes.rows[0]?.excel_url;
+    let excelUrl = settingsRes.rows[0]?.excel_url;
     if (excelUrl && excelUrl.trim()) {
+      // Strip any wrapping quotes
+      excelUrl = excelUrl.trim().replace(/^["']+|["']+$/g, '').trim();
+      // Check if local file exists on this PC/drive; fallback if moved
+      if (!excelUrl.startsWith('http://') && !excelUrl.startsWith('https://')) {
+        if (!fs.existsSync(excelUrl) && fs.existsSync(defaultPath)) {
+          excelUrl = defaultPath;
+        }
+      }
+    } else {
+      excelUrl = fs.existsSync(defaultPath) ? defaultPath : null;
+    }
+    if (excelUrl) {
       try {
         const excelClients = await excelService.getExcelClients(excelUrl);
         if (excelClients && excelClients.length > 0) {

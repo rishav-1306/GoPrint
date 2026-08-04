@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const { authenticate } = require('../middleware/auth');
-const { generateZPL, build32DigitCode } = require('../services/zplService');
+const { generateLabelByLanguage, build32DigitCode } = require('../services/zplService');
 const { sendPrintJob } = require('../services/printerService');
 const { generateQRCodeDataURL } = require('../services/qrService');
 
@@ -85,7 +85,7 @@ router.get('/next-serial', authenticate, async (req, res, next) => {
 
 /**
  * POST /api/print
- * Main print endpoint — validates, generates ZPL, sends to printer, logs result
+ * Main print endpoint — validates, generates ZPL/TSPL/EPL/Fingerprint/IPL, sends to printer, logs result
  */
 router.post('/', authenticate, async (req, res, next) => {
   const jobId = generateJobId();
@@ -148,29 +148,31 @@ router.post('/', authenticate, async (req, res, next) => {
     clientName,
   });
 
-  // --- Generate ZPL ---
+  // --- Generate Print Data for configured printer language ---
   let zplData;
+  const labelParams = {
+    partNumber,
+    partDescription: partDescription || '',
+    clientName,
+    vendorCode: vendorCode || '',
+    vendorName: vendorName || '',
+    revisionLevel: revisionLevel || '',
+    serialNumber,
+    mfgDate,
+    jtNumber: jtNumber || '',
+    afmCode: afmCode || '',
+    dealer: dealer || '',
+    hinNumber: code32,          // 32-digit composite code used as HIN
+    quantity: parseInt(quantity),
+    darkness: printer.darkness || 25,
+    speed: printer.speed || 6,
+    labelWidthMm: 100,          // Standard: 100mm (10cm)
+    labelHeightMm: 25,          // Standard: 25mm (2.5cm)
+    qrData: code32,             // QR encodes the 32-digit code
+  };
+
   try {
-    zplData = generateZPL({
-      partNumber,
-      partDescription: partDescription || '',
-      clientName,
-      vendorCode: vendorCode || '',
-      vendorName: vendorName || '',
-      revisionLevel: revisionLevel || '',
-      serialNumber,
-      mfgDate,
-      jtNumber: jtNumber || '',
-      afmCode: afmCode || '',
-      dealer: dealer || '',
-      hinNumber: code32,          // 32-digit composite code used as HIN
-      quantity: parseInt(quantity),
-      darkness: printer.darkness || 25,
-      speed: printer.speed || 6,
-      labelWidthMm: 1000,         // Fixed: 1000mm
-      labelHeightMm: 250,         // Fixed: 250mm
-      qrData: code32,             // QR encodes the 32-digit code
-    });
+    zplData = generateLabelByLanguage(printer.print_language, labelParams);
   } catch (err) {
     return res.status(500).json({ success: false, message: `Label generation failed: ${err.message}` });
   }
