@@ -66,7 +66,7 @@ const initSqlite = async () => {
             darkness INTEGER DEFAULT 25,
             speed INTEGER DEFAULT 6,
             label_width INTEGER DEFAULT 100,
-            label_height INTEGER DEFAULT 150,
+            label_height INTEGER DEFAULT 25,
             is_active INTEGER NOT NULL DEFAULT 1,
             is_default INTEGER NOT NULL DEFAULT 0,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -75,6 +75,13 @@ const initSqlite = async () => {
         `);
         // Add usb_port column if upgrading from older schema
         db.run(`ALTER TABLE printer_settings ADD COLUMN usb_port TEXT`, () => {});
+
+        // Data migration: fix label_height if it was incorrectly set to 150mm default.
+        // 150mm causes ^LL=1200 dots which makes the printer feed/blank stickers.
+        // The correct standard RSB sticker height is 25mm (^LL=200 dots).
+        db.run(`UPDATE printer_settings SET label_height = 25 WHERE label_height = 150`, (err) => {
+          if (!err) console.log('[DB] Migration: corrected label_height from 150→25mm on existing printer records.');
+        });
 
         db.run(`
           CREATE TABLE IF NOT EXISTS sticker_templates (

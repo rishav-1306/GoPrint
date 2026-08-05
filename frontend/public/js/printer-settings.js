@@ -153,7 +153,7 @@ function openModal(printer = null) {
     setField('fpDarkness', printer.darkness || 25);
     setField('fpSpeed', printer.speed || 6);
     setField('fpWidth', printer.label_width || 100);
-    setField('fpHeight', printer.label_height || 150);
+    setField('fpHeight', printer.label_height || 25);
     document.getElementById('fpDefault').checked = printer.is_default || false;
   }
 
@@ -182,7 +182,7 @@ async function savePrinter(e) {
     darkness: parseInt(getField('fpDarkness')) || 25,
     speed: parseInt(getField('fpSpeed')) || 6,
     label_width: parseInt(getField('fpWidth')) || 100,
-    label_height: parseInt(getField('fpHeight')) || 150,
+    label_height: parseInt(getField('fpHeight')) || 25,
     is_default: document.getElementById('fpDefault')?.checked || false,
   };
   try {

@@ -177,11 +177,16 @@ const generateZPL = ({
   const JT_TEXT       = formattedJt ? trunc(formattedJt, 30) : '';
 
   const zpl = [
+    // ---- Printer-level SGD commands (must precede ^XA) ----
+    // ~SD = Set Darkness (absolute, 0-30). This is the correct command for print density.
+    // ^MD inside the label is only an OFFSET and is easily overridden by firmware defaults.
+    // Sending ~SD BEFORE ^XA ensures the printer uses the configured darkness level.
+    `~SD${Math.max(0, Math.min(30, darkness))}`,
+
     '^XA',                                  // Start label
 
     // ---- Printer Setup ----
     `^CI28`,                                // UTF-8 encoding
-    `^MD${darkness}`,                       // Darkness
     `^PR${speed}`,                          // Print speed
     `^PW${labelWidthDots}`,                // Print width in dots (800)
     `^LL${labelHeightDots}`,               // Label length in dots (200)
@@ -231,9 +236,10 @@ const generateTestZPL = ({ darkness = 25, speed = 6, labelWidthMm = 100, labelHe
   const sampleCode32 = 'A4004113G10NR2507260000007DAIMLER';
 
   return [
+    // ~SD must precede ^XA for correct darkness
+    `~SD${Math.max(0, Math.min(30, darkness))}`,
     '^XA',
     `^CI28`,
-    `^MD${darkness}`,
     `^PR${speed}`,
     `^PW${labelWidthDots}`,
     `^LL${labelHeightDots}`,
@@ -294,7 +300,8 @@ const generateTSPL = ({
     `SIZE 100 mm, 25 mm`,
     `GAP 2 mm, 0 mm`,
     `SPEED ${speed}`,
-    `DENSITY ${darkness}`,
+    // TSPL DENSITY is 0-15 (not 0-30). Map the 0-30 scale to 0-15.
+    `DENSITY ${Math.round(Math.min(15, Math.max(0, darkness / 2)))}`,
     `DIRECTION 1`,
     `CLS`,
     `TEXT 12,20,"3",0,1,1,"${code32.trim()}"`,

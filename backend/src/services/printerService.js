@@ -41,8 +41,9 @@ const sendRawData = (ip, port, data, timeoutMs = config.printerTimeoutMs) => {
         if (writeErr) {
           settle(new Error(`Failed to send data to printer: ${writeErr.message}`));
         } else {
-          // Give printer a moment to process before closing
-          setTimeout(() => settle(null), 200);
+          // Give printer enough time to fully receive and process the ZPL buffer
+          // 200ms was too short for some Ethernet/WiFi printers causing empty labels
+          setTimeout(() => settle(null), 800);
         }
       });
     });
@@ -71,9 +72,11 @@ const sendUsbPrint = (printerName, usbPort, zplData) => {
     const path = require('path');
 
     // Write ZPL to a temp file
+    // IMPORTANT: ZPL/TSPL/EPL are ASCII text protocols — must use 'utf8', NOT 'binary'
+    // Using 'binary' corrupts the command stream and causes empty stickers
     const tmpFile = path.join(os.tmpdir(), `rsb_label_${Date.now()}.zpl`);
     try {
-      fs.writeFileSync(tmpFile, zplData, 'binary');
+      fs.writeFileSync(tmpFile, zplData, 'utf8');
     } catch (err) {
       return reject(new Error(`Failed to write ZPL temp file: ${err.message}`));
     }
@@ -95,21 +98,35 @@ const sendUsbPrint = (printerName, usbPort, zplData) => {
         resolve();
       });
     } else if (printerName) {
-      // Use Windows print command via printer name in the spooler
-      // copy /b file.zpl "\\%COMPUTERNAME%\PrinterName" or use net use
-      const cmd = `copy /b "${tmpFile}" "\\\\.\\${printerName.replace(/"/g, '')}"`;
+      // Use Windows print spooler via UNC path: \\localhost\PrinterName
+      // NOTE: \\.\PrinterName only works for physical port names (e.g. \\.\USB001),
+      // NOT for Windows named printers. Use \\localhost\<name> for spooler.
+      const safeName = printerName.replace(/"/g, '');
+      const uncPath = `\\\\localhost\\${safeName}`;
+      const cmd = `copy /b "${tmpFile}" "${uncPath}"`;
       exec(cmd, { shell: 'cmd.exe' }, (err, stdout, stderr) => {
         cleanup();
-        // Fallback: try PowerShell Out-Printer
+        // Fallback: try PowerShell Out-Printer (works for any Windows shared printer)
         if (err) {
-          const psCmd = `Get-Content -Path '${tmpFile.replace(/\\/g, '\\\\')}' -Raw | Out-Printer -Name '${printerName.replace(/'/g, '')}'`;
-          const ps = spawn('powershell.exe', ['-NoProfile', '-Command', psCmd]);
+          const safeFile = tmpFile.replace(/\\/g, '\\\\');
+          const safePrinter = printerName.replace(/'/g, '');
+          // Read raw bytes and send via .NET System.Printing or Out-Printer
+          const psCmd = [
+            `$bytes = [System.IO.File]::ReadAllBytes('${safeFile}');`,
+            `$stream = (New-Object -comObject WScript.Shell).Exec('cmd').StdIn;`,
+            `$printer = New-Object System.Drawing.Printing.PrintDocument;`,
+            `$printer.PrinterSettings.PrinterName = '${safePrinter}';`,
+            `Get-Content -Path '${safeFile}' -Encoding UTF8 -Raw | Out-Printer -Name '${safePrinter}'`,
+          ].join(' ');
+          const ps = spawn('powershell.exe', [
+            '-NoProfile', '-NonInteractive', '-Command',
+            `Get-Content -Path '${safeFile}' -Encoding UTF8 -Raw | Out-Printer -Name '${safePrinter}'`,
+          ]);
           let psErr = '';
           ps.stderr.on('data', d => { psErr += d.toString(); });
           ps.on('close', (code) => {
-            cleanup();
             if (code !== 0) {
-              return reject(new Error(`USB print failed for printer "${printerName}": ${psErr}`));
+              return reject(new Error(`USB print failed for printer "${printerName}": ${psErr || 'PowerShell Out-Printer returned non-zero exit code'}`));
             }
             resolve();
           });
