@@ -54,7 +54,7 @@ router.post('/', authenticate, requireRole('Admin', 'Supervisor'), async (req, r
        RETURNING *`,
       [printer_name, printer_model || null, printer_ip || null,
        printer_port || 9100, connType, usb_port || null,
-       print_language || 'ZPL', darkness || 25, speed || 6,
+       print_language || 'DIRECT_PROTOCOL', darkness || 25, speed || 6,
        label_width || 100, label_height || 25, is_default || false]
     );
     res.status(201).json({ success: true, data: result.rows[0], message: 'Printer added successfully.' });

@@ -92,7 +92,7 @@ function printerCard(p) {
       <div><p class="text-on-surface-variant text-xs uppercase font-bold">Model</p><p class="font-semibold">${p.printer_model || '---'}</p></div>
       <div><p class="text-on-surface-variant text-xs uppercase font-bold">${isUsb ? 'Port / Target' : 'IP Address'}</p><p class="font-semibold font-mono">${endpointDisplay}</p></div>
       <div><p class="text-on-surface-variant text-xs uppercase font-bold">Connection</p><p class="font-semibold">${connDisplay}</p></div>
-      <div><p class="text-on-surface-variant text-xs uppercase font-bold">Print Language</p><p class="font-semibold">${p.print_language || 'ZPL'}</p></div>
+      <div><p class="text-on-surface-variant text-xs uppercase font-bold">Print Language</p><p class="font-semibold">${p.print_language || 'DIRECT_PROTOCOL'}</p></div>
       <div><p class="text-on-surface-variant text-xs uppercase font-bold">Darkness</p><p class="font-semibold">${p.darkness}</p></div>
       <div><p class="text-on-surface-variant text-xs uppercase font-bold">Speed</p><p class="font-semibold">${p.speed}</p></div>
     </div>
@@ -149,7 +149,7 @@ function openModal(printer = null) {
     setField('fpPort', printer.printer_port || 9100);
     setField('fpConnection', printer.connection_type || 'ETHERNET');
     setField('fpUsbPort', printer.usb_port || '');
-    setField('fpLanguage', printer.print_language || 'ZPL');
+    setField('fpLanguage', printer.print_language || 'DIRECT_PROTOCOL');
     setField('fpDarkness', printer.darkness || 25);
     setField('fpSpeed', printer.speed || 6);
     setField('fpWidth', printer.label_width || 100);

@@ -406,6 +406,10 @@ const generateFingerprint = ({
   mfgDate,
   jtNumber,
   quantity = 1,
+  darkness = 25,
+  speed = 6,
+  labelWidthMm = 100,
+  labelHeightMm = 25,
   qrData,
 }) => {
   const code32 = build32DigitCode({ partNumber, revisionLevel, vendorCode, mfgDate, serialNumber, clientName });
@@ -415,14 +419,16 @@ const generateFingerprint = ({
 
   return [
     `CLL`,
-    `PAGE SIZE 100,25`,
+    `MEDIA SIZE ${labelWidthMm || 100},${labelHeightMm || 25}`,
+    `DARKNESS ${Math.max(0, Math.min(100, darkness * 3))}`,
+    `SPEED ${speed}`,
     `PRPOS 12,18`,
     `FONT "Swiss 721 BT Bold",12`,
     `PRTXT "${code32.trim()}"`,
     `PRPOS 12,82`,
     `FONT "Swiss 721 BT",10`,
     `PRTXT "${trunc(partDescription || '', 38)}"`,
-    ...(jtText ? [`PRPOS 12,138`, `PRTXT "${jtText}"`] : []),
+    ...(jtText ? [`PRPOS 12,138`, `FONT "Swiss 721 BT",10`, `PRTXT "${jtText}"`] : []),
     `PRPOS 640,15`,
     `BARSET "QRCODE",4,1,2,2`,
     `PRBAR "${qrContent}"`,
@@ -431,21 +437,26 @@ const generateFingerprint = ({
 };
 
 /**
- * Generate test Honeywell Fingerprint label
+ * Generate test Honeywell Fingerprint / Direct Protocol label
  */
-const generateTestFingerprint = () => {
+const generateTestFingerprint = ({ darkness = 25, speed = 6, labelWidthMm = 100, labelHeightMm = 25 } = {}) => {
   const now = new Date().toLocaleString('en-IN');
   const sampleCode32 = 'A4004113G10NR2507260000007DAIMLER';
 
   return [
     `CLL`,
-    `PAGE SIZE 100,25`,
+    `MEDIA SIZE ${labelWidthMm || 100},${labelHeightMm || 25}`,
+    `DARKNESS ${Math.max(0, Math.min(100, darkness * 3))}`,
+    `SPEED ${speed}`,
     `PRPOS 12,18`,
     `FONT "Swiss 721 BT Bold",12`,
     `PRTXT "${sampleCode32}"`,
     `PRPOS 12,82`,
     `FONT "Swiss 721 BT",10`,
     `PRTXT "TEST PRINT OK — ${now}"`,
+    `PRPOS 12,136`,
+    `FONT "Swiss 721 BT",10`,
+    `PRTXT "100x25mm | DIRECT PROTOCOL | DARK:${darkness} | SPD:${speed}"`,
     `PRPOS 640,15`,
     `BARSET "QRCODE",4,1,2,2`,
     `PRBAR "${sampleCode32}"`,
@@ -510,8 +521,8 @@ const generateTestIPL = () => {
 /**
  * Unified Multi-Printer Language Router
  */
-const generateLabelByLanguage = (language = 'ZPL', params = {}) => {
-  const lang = (language || 'ZPL').toUpperCase();
+const generateLabelByLanguage = (language = 'DIRECT_PROTOCOL', params = {}) => {
+  const lang = (language || 'DIRECT_PROTOCOL').toUpperCase();
   switch (lang) {
     case 'TSPL':
       return generateTSPL(params);
@@ -519,21 +530,24 @@ const generateLabelByLanguage = (language = 'ZPL', params = {}) => {
       return generateEPL(params);
     case 'FINGERPRINT':
     case 'DIRECT_PROTOCOL':
+    case 'DIRECT PROTOCOL':
+    case 'DIRECTPROTOCOL':
     case 'DP':
       return generateFingerprint(params);
     case 'IPL':
       return generateIPL(params);
     case 'ZPL':
-    default:
       return generateZPL(params);
+    default:
+      return generateFingerprint(params);
   }
 };
 
 /**
  * Unified Test Label Router
  */
-const generateTestLabelByLanguage = (language = 'ZPL', params = {}) => {
-  const lang = (language || 'ZPL').toUpperCase();
+const generateTestLabelByLanguage = (language = 'DIRECT_PROTOCOL', params = {}) => {
+  const lang = (language || 'DIRECT_PROTOCOL').toUpperCase();
   switch (lang) {
     case 'TSPL':
       return generateTestTSPL(params);
@@ -541,13 +555,16 @@ const generateTestLabelByLanguage = (language = 'ZPL', params = {}) => {
       return generateTestEPL(params);
     case 'FINGERPRINT':
     case 'DIRECT_PROTOCOL':
+    case 'DIRECT PROTOCOL':
+    case 'DIRECTPROTOCOL':
     case 'DP':
       return generateTestFingerprint(params);
     case 'IPL':
       return generateTestIPL(params);
     case 'ZPL':
-    default:
       return generateTestZPL(params);
+    default:
+      return generateTestFingerprint(params);
   }
 };
 

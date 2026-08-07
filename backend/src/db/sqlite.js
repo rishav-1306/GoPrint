@@ -62,7 +62,7 @@ const initSqlite = async () => {
             printer_port INTEGER DEFAULT 9100,
             connection_type TEXT DEFAULT 'ETHERNET',
             usb_port TEXT,
-            print_language TEXT DEFAULT 'ZPL',
+            print_language TEXT DEFAULT 'DIRECT_PROTOCOL',
             darkness INTEGER DEFAULT 25,
             speed INTEGER DEFAULT 6,
             label_width INTEGER DEFAULT 100,
@@ -81,6 +81,11 @@ const initSqlite = async () => {
         // The correct standard RSB sticker height is 25mm (^LL=200 dots).
         db.run(`UPDATE printer_settings SET label_height = 25 WHERE label_height = 150`, (err) => {
           if (!err) console.log('[DB] Migration: corrected label_height from 150→25mm on existing printer records.');
+        });
+
+        // Data migration: update printer print_language from ZPL to DIRECT_PROTOCOL
+        db.run(`UPDATE printer_settings SET print_language = 'DIRECT_PROTOCOL' WHERE print_language = 'ZPL' OR print_language IS NULL`, (err) => {
+          if (!err) console.log('[DB] Migration: updated printer print_language from ZPL to DIRECT_PROTOCOL.');
         });
 
         db.run(`
