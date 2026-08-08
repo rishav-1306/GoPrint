@@ -33,7 +33,7 @@ router.get('/:id', authenticate, async (req, res, next) => {
 router.post('/', authenticate, requireRole('Admin', 'Supervisor'), async (req, res, next) => {
   try {
     const { printer_name, printer_model, printer_ip, printer_port, connection_type, usb_port,
-            print_language, darkness, speed, label_width, label_height, is_default } = req.body;
+            print_language, label_font, darkness, speed, label_width, label_height, is_default } = req.body;
 
     if (!printer_name) {
       return res.status(400).json({ success: false, message: 'Printer name is required.' });
@@ -49,12 +49,13 @@ router.post('/', authenticate, requireRole('Admin', 'Supervisor'), async (req, r
     const result = await db.query(
       `INSERT INTO printer_settings
         (printer_name, printer_model, printer_ip, printer_port, connection_type, usb_port,
-         print_language, darkness, speed, label_width, label_height, is_default)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+         print_language, label_font, darkness, speed, label_width, label_height, is_default)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
        RETURNING *`,
       [printer_name, printer_model || null, printer_ip || null,
        printer_port || 9100, connType, usb_port || null,
-       print_language || 'DIRECT_PROTOCOL', darkness || 25, speed || 6,
+       print_language || 'DIRECT_PROTOCOL', label_font || null,
+       darkness || 25, speed || 6,
        label_width || 100, label_height || 25, is_default || false]
     );
     res.status(201).json({ success: true, data: result.rows[0], message: 'Printer added successfully.' });
@@ -67,7 +68,7 @@ router.post('/', authenticate, requireRole('Admin', 'Supervisor'), async (req, r
 router.put('/:id', authenticate, requireRole('Admin', 'Supervisor'), async (req, res, next) => {
   try {
     const { printer_name, printer_model, printer_ip, printer_port, connection_type, usb_port,
-            print_language, darkness, speed, label_width, label_height, is_default } = req.body;
+            print_language, label_font, darkness, speed, label_width, label_height, is_default } = req.body;
 
     if (is_default) {
       await db.query('UPDATE printer_settings SET is_default = FALSE WHERE id != $1', [req.params.id]);
@@ -82,15 +83,16 @@ router.put('/:id', authenticate, requireRole('Admin', 'Supervisor'), async (req,
         connection_type = COALESCE($5, connection_type),
         usb_port = COALESCE($6, usb_port),
         print_language = COALESCE($7, print_language),
-        darkness = COALESCE($8, darkness),
-        speed = COALESCE($9, speed),
-        label_width = COALESCE($10, label_width),
-        label_height = COALESCE($11, label_height),
-        is_default = COALESCE($12, is_default),
+        label_font = $8,
+        darkness = COALESCE($9, darkness),
+        speed = COALESCE($10, speed),
+        label_width = COALESCE($11, label_width),
+        label_height = COALESCE($12, label_height),
+        is_default = COALESCE($13, is_default),
         updated_at = NOW()
-       WHERE id = $13 RETURNING *`,
+       WHERE id = $14 RETURNING *`,
       [printer_name, printer_model, printer_ip, printer_port,
-       connection_type, usb_port, print_language, darkness, speed,
+       connection_type, usb_port, print_language, label_font || null, darkness, speed,
        label_width, label_height, is_default, req.params.id]
     );
     if (result.rows.length === 0) return res.status(404).json({ success: false, message: 'Printer not found.' });
@@ -174,6 +176,7 @@ router.post('/:id/test-print', authenticate, requireRole('Admin', 'Supervisor'),
       speed: printer.speed,
       labelWidthMm: 100,
       labelHeightMm: 25,
+      labelFont: printer.label_font || null,
     });
 
     await sendPrintJob({

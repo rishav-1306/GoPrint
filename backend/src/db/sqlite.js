@@ -75,6 +75,8 @@ const initSqlite = async () => {
         `);
         // Add usb_port column if upgrading from older schema
         db.run(`ALTER TABLE printer_settings ADD COLUMN usb_port TEXT`, () => {});
+        // Add label_font column if upgrading from older schema (default: NULL = printer native font)
+        db.run(`ALTER TABLE printer_settings ADD COLUMN label_font TEXT DEFAULT NULL`, () => {});
 
         // Data migration: fix label_height if it was incorrectly set to 150mm default.
         // 150mm causes ^LL=1200 dots which makes the printer feed/blank stickers.
@@ -86,6 +88,11 @@ const initSqlite = async () => {
         // Data migration: update printer print_language from ZPL to DIRECT_PROTOCOL
         db.run(`UPDATE printer_settings SET print_language = 'DIRECT_PROTOCOL' WHERE print_language = 'ZPL' OR print_language IS NULL`, (err) => {
           if (!err) console.log('[DB] Migration: updated printer print_language from ZPL to DIRECT_PROTOCOL.');
+        });
+
+        // Data migration: reset label_font to NULL on all existing printer records so printer uses native font without FONT commands
+        db.run(`UPDATE printer_settings SET label_font = NULL WHERE label_font = 'Universe Bold' OR label_font = 'Swiss721 BT' OR label_font = 'Univers Bold'`, (err) => {
+          if (!err) console.log('[DB] Migration: reset label_font to NULL (printer native default) on existing records.');
         });
 
         db.run(`

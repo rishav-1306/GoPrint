@@ -168,6 +168,7 @@ router.post('/', authenticate, async (req, res, next) => {
     speed: printer.speed || 6,
     labelWidthMm: 100,          // Standard: 100mm (10cm)
     labelHeightMm: 25,          // Standard: 25mm (2.5cm)
+    labelFont: printer.label_font || null,  // Font selected in Printer Settings (null = printer hardware default)
     qrData: code32,             // QR encodes the 32-digit code
   };
 

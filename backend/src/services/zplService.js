@@ -424,12 +424,16 @@ const generateFingerprint = ({
   speed = 6,
   labelWidthMm = 100,
   labelHeightMm = 25,
+  labelFont = null,   // null = no FONT command; printer uses its own default
   qrData,
 }) => {
   const code32 = build32DigitCode({ partNumber, revisionLevel, vendorCode, mfgDate, serialNumber, clientName });
   const qrContent = qrData || code32;
   const formattedJt = jtNumber ? (jtNumber.toUpperCase().startsWith('JT') ? jtNumber : `JT ${jtNumber}`) : '';
   const jtText = formattedJt ? trunc(formattedJt, 30) : '';
+  // Only emit FONT commands if a specific font is configured; otherwise let the printer use its default
+  const fontCmd12 = labelFont ? [`FONT "${labelFont}",12`] : [];
+  const fontCmd10 = labelFont ? [`FONT "${labelFont}",10`] : [];
 
   return [
     `CLL`,
@@ -437,12 +441,12 @@ const generateFingerprint = ({
     `DARKNESS ${Math.max(0, Math.min(100, darkness * 3))}`,
     `SPEED ${speed}`,
     `PRPOS 12,18`,
-    `FONT "Universe Bold",12`,
+    ...fontCmd12,
     `PRTXT "${code32.trim()}"`,
     `PRPOS 12,82`,
-    `FONT "Universe Bold",10`,
+    ...fontCmd10,
     `PRTXT "${cleanText(partDescription, 50)}"`,
-    ...(jtText ? [`PRPOS 12,138`, `FONT "Universe Bold",10`, `PRTXT "${cleanText(jtText, 30)}"`] : []),
+    ...(jtText ? [`PRPOS 12,138`, ...fontCmd10, `PRTXT "${cleanText(jtText, 30)}"`] : []),
     `PRPOS 640,15`,
     `BARSET "QRCODE",4,1,2,2`,
     `PRBAR "${qrContent}"`,
@@ -453,9 +457,12 @@ const generateFingerprint = ({
 /**
  * Generate test Honeywell Fingerprint / Direct Protocol label
  */
-const generateTestFingerprint = ({ darkness = 25, speed = 6, labelWidthMm = 100, labelHeightMm = 25 } = {}) => {
+const generateTestFingerprint = ({ darkness = 25, speed = 6, labelWidthMm = 100, labelHeightMm = 25, labelFont = null } = {}) => {
   const now = new Date().toLocaleString('en-IN');
   const sampleCode32 = 'A4004113G10NR2507260000007DAIMLER';
+  // Only emit FONT commands if a specific font is configured; otherwise let the printer use its default
+  const fontCmd12 = labelFont ? [`FONT "${labelFont}",12`] : [];
+  const fontCmd10 = labelFont ? [`FONT "${labelFont}",10`] : [];
 
   return [
     `CLL`,
@@ -463,13 +470,13 @@ const generateTestFingerprint = ({ darkness = 25, speed = 6, labelWidthMm = 100,
     `DARKNESS ${Math.max(0, Math.min(100, darkness * 3))}`,
     `SPEED ${speed}`,
     `PRPOS 12,18`,
-    `FONT "Universe Bold",12`,
+    ...fontCmd12,
     `PRTXT "${sampleCode32}"`,
     `PRPOS 12,82`,
-    `FONT "Universe Bold",10`,
+    ...fontCmd10,
     `PRTXT "TEST PRINT OK — ${now}"`,
     `PRPOS 12,136`,
-    `FONT "Universe Bold",10`,
+    ...fontCmd10,
     `PRTXT "100x25mm | DIRECT PROTOCOL | DARK:${darkness} | SPD:${speed}"`,
     `PRPOS 640,15`,
     `BARSET "QRCODE",4,1,2,2`,

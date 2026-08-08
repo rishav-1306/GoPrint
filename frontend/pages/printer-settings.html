@@ -97,6 +97,67 @@
             <option value="DIRECT_PROTOCOL" selected>Direct Protocol (Honeywell / Intermec)</option><option value="ZPL">ZPL II (Zebra)</option><option value="EPL">EPL</option><option value="IPL">IPL (Intermec)</option><option value="FINGERPRINT">Fingerprint (Honeywell)</option><option value="TSPL">TSPL (TSC)</option>
           </select>
         </div>
+        <div class="col-span-2"><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Label Font (PM43 Built-in)</label>
+          <select class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md bg-white font-mono" id="fpFont">
+            <option value="" selected>Printer Default (No font command sent - uses printer native font)</option>
+            <option value="Andale Mono">Andale Mono</option>
+            <option value="Andale Mono Bold">Andale Mono Bold</option>
+            <option value="CG Times">CG Times</option>
+            <option value="CG Times Bold">CG Times Bold</option>
+            <option value="CG Triumvirate Condensed Bold">CG Triumvirate Condensed Bold</option>
+            <option value="Century Schoolbook Roman">Century Schoolbook Roman</option>
+            <option value="Dutch 801 Roman">Dutch 801 Roman</option>
+            <option value="EPL203FNT1">EPL203FNT1</option>
+            <option value="EPL203FNT2">EPL203FNT2</option>
+            <option value="EPL203FNT3">EPL203FNT3</option>
+            <option value="EPL203FNT4">EPL203FNT4</option>
+            <option value="EPL300FNT1">EPL300FNT1</option>
+            <option value="EPL300FNT2">EPL300FNT2</option>
+            <option value="EPL300FNT3">EPL300FNT3</option>
+            <option value="EPL300FNT4">EPL300FNT4</option>
+            <option value="EPL300FNT5">EPL300FNT5</option>
+            <option value="IPLFNT0H">IPLFNT0H</option>
+            <option value="IPLFNT1H">IPLFNT1H</option>
+            <option value="IPLFNT20">IPLFNT20</option>
+            <option value="IPLFNT20H">IPLFNT20H</option>
+            <option value="IPLFNT21">IPLFNT21</option>
+            <option value="IPLFNT21H">IPLFNT21H</option>
+            <option value="IPLFNT22">IPLFNT22</option>
+            <option value="IPLFNT23">IPLFNT23</option>
+            <option value="IPLFNT23H">IPLFNT23H</option>
+            <option value="IPLFNT24">IPLFNT24</option>
+            <option value="IPLFNT24H">IPLFNT24H</option>
+            <option value="IPLFNT2H">IPLFNT2H</option>
+            <option value="IPLFNT30">IPLFNT30</option>
+            <option value="IPLFNT30H">IPLFNT30H</option>
+            <option value="IPLFNT31">IPLFNT31</option>
+            <option value="IPLFNT31H">IPLFNT31H</option>
+            <option value="IPLFNT32">IPLFNT32</option>
+            <option value="IPLFNT32H">IPLFNT32H</option>
+            <option value="IPLFNT33">IPLFNT33</option>
+            <option value="IPLFNT33H">IPLFNT33H</option>
+            <option value="IPLFNT34">IPLFNT34</option>
+            <option value="IPLFNT34H">IPLFNT34H</option>
+            <option value="IPLFNT35">IPLFNT35</option>
+            <option value="IPLFNT36">IPLFNT36</option>
+            <option value="IPLFNT37">IPLFNT37</option>
+            <option value="IPLFNT7H">IPLFNT7H</option>
+            <option value="IPLFONT0">IPLFONT0</option>
+            <option value="IPLFONT1">IPLFONT1</option>
+            <option value="IPLFONT2">IPLFONT2</option>
+            <option value="IPLFONT7">IPLFONT7</option>
+            <option value="Letter Gothic">Letter Gothic</option>
+            <option value="Monospace 821">Monospace 821</option>
+            <option value="Monospace 821 Bold">Monospace 821 Bold</option>
+            <option value="OCR A">OCR A</option>
+            <option value="OCR B">OCR B</option>
+            <option value="Univers">Univers</option>
+            <option value="Univers Bold">Univers Bold</option>
+            <option value="Univers Condensed Bold">Univers Condensed Bold</option>
+            <option value="Univers Extra Condensed">Univers Extra Condensed</option>
+          </select>
+          <p class="text-[10px] text-on-surface-variant mt-xs">If left as Printer Default, the printer will print using its hardware default font without errors.</p>
+        </div>
         <div><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Darkness (0-30)</label><input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="fpDarkness" max="30" min="0" type="number" value="25"/></div>
         <div><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Print Speed (1-14)</label><input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="fpSpeed" max="14" min="1" type="number" value="6"/></div>
         <div><label class="block text-xs font-bold text-on-surface-variant uppercase mb-xs">Label Width (mm)</label><input class="w-full h-11 px-sm rounded-lg border border-outline-variant focus:border-primary text-body-md" id="fpWidth" type="number" value="100"/></div>
