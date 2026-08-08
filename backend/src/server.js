@@ -33,8 +33,11 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
 }));
 
+// CORS — allow all origins for intranet/factory deployment.
+// Since this server is not exposed to the internet, allowing all origins
+// is safe and ensures any company workstation can access the system.
 app.use(cors({
-  origin: config.corsOrigins,
+  origin: true, // reflect request origin — works for any company IP
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],

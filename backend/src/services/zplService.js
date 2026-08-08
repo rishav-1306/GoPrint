@@ -82,6 +82,20 @@ const fixLen = (str, len) => {
 const trunc = (str, max) => str ? String(str).substring(0, max) : '';
 
 /**
+ * Clean text for label printing: trim whitespace, trailing dots, commas, extra spaces
+ * Prevents unprofessional trailing characters like "CROSS ASSY  JT 620 NG L ."
+ */
+const cleanText = (str, max) => {
+  if (!str) return '';
+  // Collapse multiple spaces, trim edges, remove trailing punctuation
+  let s = String(str).replace(/\s+/g, ' ').trim();
+  // Remove trailing dots, commas, dashes, semicolons
+  s = s.replace(/[.,;:\-]+$/, '').trim();
+  if (max && s.length > max) s = s.substring(0, max).replace(/[.,;:\-\s]+$/, '').trim();
+  return s;
+};
+
+/**
  * Build the composite code
  * Composition:
  *   partNumber   → 8 chars  (truncated/padded, uppercase, no spaces)
@@ -193,22 +207,22 @@ const generateZPL = ({
     `^LH0,0`,                              // Label home (top-left origin)
 
     // ---- ROW 1: COMPOSITE CODE ----
+    // ^BY0 = no barcode bar; using ^FT (field typeset) directly without ^FB
+    // to prevent auto-ellipsis truncation that shows "..." on the sticker
     `^FO${MARGIN},${CODE_Y}`,
     `^A0N,${CODE_FONT_H},${CODE_FONT_W}`,
-    `^FB${TEXT_AREA_W},1,,`,
     `^FD${code32.trim()}^FS`,
 
     // ---- ROW 2: PART DESCRIPTION ----
     `^FO${MARGIN},${DESC_Y}`,
     `^A0N,${DESC_FONT_H},${DESC_FONT_W}`,
-    `^FB${TEXT_AREA_W},1,,`,
-    `^FD${trunc(partDescription || '', 38)}^FS`,
+    `^FD${cleanText(partDescription, 50)}^FS`,
 
     // ---- ROW 3: JT NUMBER ----
     ...(JT_TEXT ? [
       `^FO${MARGIN},${JT_Y}`,
       `^A0N,${DESC_FONT_H},${DESC_FONT_W}`,
-      `^FD${JT_TEXT}^FS`,
+      `^FD${cleanText(JT_TEXT, 30)}^FS`,
     ] : []),
 
     // ---- QR CODE (Native ZPL, right side, encodes 32-digit code) ----
@@ -305,8 +319,8 @@ const generateTSPL = ({
     `DIRECTION 1`,
     `CLS`,
     `TEXT 12,20,"3",0,1,1,"${code32.trim()}"`,
-    `TEXT 12,82,"3",0,1,1,"${trunc(partDescription || '', 38)}"`,
-    ...(jtText ? [`TEXT 12,138,"3",0,1,1,"${jtText}"`] : []),
+    `TEXT 12,82,"3",0,1,1,"${cleanText(partDescription, 50)}"`,
+    ...(jtText ? [`TEXT 12,138,"3",0,1,1,"${cleanText(jtText, 30)}"`] : []),
     `QRCODE 640,15,H,4,A,0,"${qrContent}"`,
     `PRINT ${quantity},1`,
   ].join('\n');
@@ -364,8 +378,8 @@ const generateEPL = ({
     `S${Math.min(speed, 6)}`,
     `D${Math.min(darkness, 15)}`,
     `A12,18,0,3,1,1,N,"${code32.trim()}"`,
-    `A12,82,0,2,1,1,N,"${trunc(partDescription || '', 38)}"`,
-    ...(jtText ? [`A12,138,0,2,1,1,N,"${jtText}"`] : []),
+    `A12,82,0,2,1,1,N,"${cleanText(partDescription, 50)}"`,
+    ...(jtText ? [`A12,138,0,2,1,1,N,"${cleanText(jtText, 30)}"`] : []),
     `b640,15,Q,m4,s5,"${qrContent}"`,
     `P${quantity}`,
   ].join('\n');
@@ -427,8 +441,8 @@ const generateFingerprint = ({
     `PRTXT "${code32.trim()}"`,
     `PRPOS 12,82`,
     `FONT "Universe Bold",10`,
-    `PRTXT "${trunc(partDescription || '', 38)}"`,
-    ...(jtText ? [`PRPOS 12,138`, `FONT "Universe Bold",10`, `PRTXT "${jtText}"`] : []),
+    `PRTXT "${cleanText(partDescription, 50)}"`,
+    ...(jtText ? [`PRPOS 12,138`, `FONT "Universe Bold",10`, `PRTXT "${cleanText(jtText, 30)}"`] : []),
     `PRPOS 640,15`,
     `BARSET "QRCODE",4,1,2,2`,
     `PRBAR "${qrContent}"`,
